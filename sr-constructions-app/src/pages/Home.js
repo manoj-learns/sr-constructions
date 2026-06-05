@@ -1,0 +1,249 @@
+import { useNavigate } from 'react-router-dom';
+import { PROJECTS, UPCOMING } from '../data/projects';
+import Footer from '../components/Footer';
+import useScrollAnimation from '../components/useScrollAnimation';
+
+export default function Home() {
+  const navigate = useNavigate();
+  useScrollAnimation();
+
+  return (
+    <>
+      {/* Hero */}
+      <section id="hero-section">
+        <div className="hero-bg"></div>
+        <div className="hero-overlay"></div>
+        <div className="hero-content">
+          <div className="hero-eyebrow">Est. 2007</div>
+          <h1 className="hero-title">
+            From Vision to Reality:<em><br />You Dream,</em> We Build.
+          </h1>
+          <p className="hero-tagline">Quality. Trust. Strength. — Building Spaces Meant to Last.</p>
+          <button className="hero-cta" onClick={() => document.getElementById('projects-section')?.scrollIntoView({ behavior: 'smooth' })}>
+            <span>Explore Our Work</span><i className="fa fa-arrow-right"></i>
+          </button>
+        </div>
+        <div className="hero-scroll">Scroll</div>
+      </section>
+
+      {/* About */}
+      <section id="about-section" className="section-pad">
+        <div className="about-inner">
+          <div className="about-text fade-left">
+            <div className="section-label">Company Overview</div>
+            <div className="gold-bar"></div>
+            <h2 className="section-title">19 years of building dreams</h2>
+            <p>At SR Constructions, we believe a home is the most important bridge between a person's dreams and their reality. Founded in 2007, our journey over the last two decades has been defined by a simple philosophy: Start with affection, finish with perfection.</p>
+            <p>We have successfully delivered over 15+ projects, ranging from residential apartments to high-value plots. We aren't just selling land; we are offering a footprint in the most promising locations of tomorrow.</p>
+          </div>
+          <div className="about-stats fade-right">
+            <div className="stat-card">
+              <div className="stat-number">19</div>
+              <div>
+                <div className="stat-label">Years of Excellence</div>
+                <div className="stat-desc">Trusted since 2007</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-number">15+</div>
+              <div>
+                <div className="stat-label">Projects Delivered</div>
+                <div className="stat-desc">Residential apartments, Layouts</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Vision */}
+      <section id="vision-section" className="section-pad">
+        <div className="vision-inner">
+          <div className="fade-up">
+            <div className="section-label" style={{ textAlign: 'center' }}>Our Philosophy</div>
+            <div className="gold-bar center"></div>
+            <h2 className="section-title" style={{ textAlign: 'center' }}>Vision &amp; Mission</h2>
+          </div>
+          <div className="vision-cards">
+            <div className="vision-card fade-left">
+              <div className="vision-icon"><i className="fa fa-eye"></i></div>
+              <h3>Our Vision</h3>
+              <p>Our vision is to be the most trusted name in infrastructure, recognized not just for the luxury we build, but for the unwavering promises we keep—ensuring every partner and homeowner knows they've secured their greatest lifetime investment.</p>
+              <div className="vision-card-bg">V</div>
+            </div>
+            <div className="vision-card fade-right">
+              <div className="vision-icon"><i className="fa fa-bullseye"></i></div>
+              <h3>Our Mission</h3>
+              <p>We believe in doing what is best for our clients. We are driven by a relentless pursuit of quality and innovative design, but our true success is measured by the trust we build. We don't just meet deadlines; we empower communities and honor our word, ensuring every infrastructure solution we deliver is grounded in transparency.</p>
+              <div className="vision-card-bg">M</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ongoing Projects */}
+      <section id="upcoming-section" className="section-pad">
+        <div className="upcoming-inner">
+          <div className="projects-header">
+            <div className="fade-up">
+              <div className="section-label">Currently Available</div>
+              <div className="gold-bar"></div>
+              <h2 className="section-title">Ongoing Projects</h2>
+              <p style={{ color: 'var(--text-muted)', maxWidth: 560, margin: '16px 0 0', fontSize: 15, lineHeight: 1.7 }}>
+                Plots and residences currently available — secure your space in tomorrow's prime locations today.
+              </p>
+            </div>
+            <button className="btn-outline fade-right" onClick={() => navigate('/ongoing')}>
+              <i className="fa fa-folder-open"></i> View All Ongoing
+            </button>
+          </div>
+          <div className="upcoming-grid">
+            {UPCOMING.slice(0, 3).map((u, i) => (
+              <div
+                key={u.id}
+                className="upcoming-card fade-up"
+                style={{ transitionDelay: `${(i % 3) * 0.1}s` }}
+                onClick={() => navigate(`/ongoing/${u.id}`)}
+              >
+                <div className="upcoming-card-img-wrap">
+                  <img className="upcoming-img" src={u.img} alt={u.name} />
+                  <div className="uc-hint">View Details</div>
+                </div>
+                <div className="upcoming-body">
+                  <div className="upcoming-badge">{u.badge}</div>
+                  <div className="upcoming-name">{u.name}</div>
+                  <div className="upcoming-location">
+                    <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
+                    {u.location}
+                  </div>
+                  <div className="upcoming-completion"><strong>{u.completion}</strong></div>
+                  <span className="btn-outline" style={{ display: 'inline-flex' }}>
+                    Learn More <i className="fa fa-arrow-right"></i>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Previous Projects */}
+      <section id="projects-section" className="section-pad">
+        <div className="projects-inner">
+          <div className="projects-header">
+            <div className="fade-left">
+              <div className="section-label">Our Portfolio</div>
+              <div className="gold-bar"></div>
+              <h2 className="section-title">Previous Ventures</h2>
+            </div>
+            <button className="btn-outline fade-right" onClick={() => navigate('/projects')}>
+              <i className="fa fa-folder-open"></i> View All Projects
+            </button>
+          </div>
+          <div className="hp-projects-grid">
+            {PROJECTS.slice(0, 4).map((p, i) => (
+              <div
+                key={p.id}
+                className="hp-project-card fade-up"
+                style={{ transitionDelay: `${(i % 4) * 0.1}s` }}
+                onClick={() => navigate(`/projects/${p.id}`)}
+              >
+                <img src={p.img} alt={p.name} />
+                <div className="hp-card-overlay">
+                  <div className="hp-card-hint">View Details</div>
+                  <div className="hp-card-tag">{p.tag}</div>
+                  <div className="hp-card-name">{p.name}</div>
+                  <div className="hp-card-meta">
+                    <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
+                    {p.location}
+                  </div>
+                  <div className="hp-card-desc">{p.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact-section" className="section-pad">
+        <div className="contact-inner">
+          <div className="contact-info fade-left">
+            <div className="section-label">Get In Touch</div>
+            <div className="gold-bar"></div>
+            <h2 className="section-title">Let's Build<br />Something Great</h2>
+            <p>Whether you're planning a residential development, commercial complex, or large-scale infrastructure — we'd love to hear from you. Reach out and one of our associates will connect with you within 24 hours.</p>
+            <div className="contact-items">
+              <div className="contact-item">
+                <div className="contact-item-icon"><i className="fa fa-map-marker-alt"></i></div>
+                <div className="contact-item-text">
+                  <strong>Office</strong>
+                  <span>Shop 5, Vuda Shopping Centre, Sector-7, MVP Colony,<br />Visakhapatnam, Andhra Pradesh — 530017</span>
+                </div>
+              </div>
+              <div className="contact-item">
+                <div className="contact-item-icon"><i className="fa fa-phone-alt"></i></div>
+                <div className="contact-item-text"><strong>Phone</strong><span>+91 99088 34499</span></div>
+              </div>
+              <div className="contact-item">
+                <div className="contact-item-icon"><i className="fa fa-envelope"></i></div>
+                <div className="contact-item-text"><strong>Email</strong><span>srconstructions64@gmail.com</span></div>
+              </div>
+            </div>
+            <div className="map-container">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d30400.43125390577!2d83.30225211083985!3d17.742098999999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a3945001951e543%3A0xf6ad36daa644d8d1!2sSR%20constructions!5e0!3m2!1sen!2sin!4v1772892246396!5m2!1sen!2sin"
+                allowFullScreen
+                loading="lazy"
+                title="SR Constructions Location"
+              ></iframe>
+            </div>
+            <div className="social-links">
+              <a href="https://wa.me/9908834499" className="social-link" target="_blank" rel="noreferrer"><i className="fab fa-whatsapp"></i></a>
+              <a href="https://www.instagram.com/srconstructions64" className="social-link" target="_blank" rel="noreferrer"><i className="fab fa-instagram"></i></a>
+              <a href="https://www.facebook.com/profile.php?id=61585204748688" className="social-link" target="_blank" rel="noreferrer"><i className="fab fa-facebook-f"></i></a>
+              <a href="https://www.youtube.com/@SRConstructions64" className="social-link" target="_blank" rel="noreferrer"><i className="fab fa-youtube"></i></a>
+            </div>
+          </div>
+          <div className="contact-form-wrap fade-right">
+            <form action="https://formspree.io/f/mreygnng" method="POST">
+              <h3>Send Us a Message</h3>
+              <p>Fill in your details and we'll get back to you promptly.</p>
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Full Name</label>
+                  <input type="text" name="Name" className="form-input" placeholder="Your full name" required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Phone</label>
+                  <input type="tel" name="Phone number" className="form-input" placeholder="+91 XXXXX XXXXX" required />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input type="email" name="Email" className="form-input" placeholder="you@company.com" required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Project Type</label>
+                <select name="Project Type" className="form-input" required>
+                  <option value="Residential">Residential</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Layouts">Layouts</option>
+                  <option value="Project development">Project Development</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Message</label>
+                <textarea name="Message" className="form-textarea" placeholder="Tell us about your project vision…" required></textarea>
+              </div>
+              <button type="submit" className="btn-gold">
+                Send Enquiry <i className="fa fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </>
+  );
+}
