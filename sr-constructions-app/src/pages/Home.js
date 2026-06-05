@@ -1,11 +1,26 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PROJECTS, UPCOMING } from '../data/projects';
 import Footer from '../components/Footer';
 import useScrollAnimation from '../components/useScrollAnimation';
+import { addContact, getProjects, getOngoing } from '../services/db';
 
 export default function Home() {
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
+  const [ongoing, setOngoing] = useState([]);
   useScrollAnimation();
+
+  useEffect(() => {
+    getProjects().then(setProjects).catch(() => {});
+    getOngoing().then(setOngoing).catch(() => {});
+  }, []);
+
+  const handleContactSubmit = async (e) => {
+    const form = e.target;
+    const data = Object.fromEntries(new FormData(form));
+    try { await addContact(data); } catch { /* non-blocking */ }
+    // Let Formspree handle the actual submission
+  };
 
   return (
     <>
@@ -97,7 +112,7 @@ export default function Home() {
             </button>
           </div>
           <div className="upcoming-grid">
-            {UPCOMING.slice(0, 3).map((u, i) => (
+            {ongoing.slice(0, 3).map((u, i) => (
               <div
                 key={u.id}
                 className="upcoming-card fade-up"
@@ -140,7 +155,7 @@ export default function Home() {
             </button>
           </div>
           <div className="hp-projects-grid">
-            {PROJECTS.slice(0, 4).map((p, i) => (
+            {projects.slice(0, 4).map((p, i) => (
               <div
                 key={p.id}
                 className="hp-project-card fade-up"
@@ -205,7 +220,7 @@ export default function Home() {
             </div>
           </div>
           <div className="contact-form-wrap fade-right">
-            <form action="https://formspree.io/f/mreygnng" method="POST">
+            <form action="https://formspree.io/f/mreygnng" method="POST" onSubmit={handleContactSubmit}>
               <h3>Send Us a Message</h3>
               <p>Fill in your details and we'll get back to you promptly.</p>
               <div className="form-row">

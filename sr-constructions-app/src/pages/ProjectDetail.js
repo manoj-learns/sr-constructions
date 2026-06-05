@@ -1,14 +1,23 @@
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { PROJECTS } from '../data/projects';
+import { getProject } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const p = PROJECTS.find((x) => x.id === id);
+  const [p, setP] = useState(null);
+  const [loading, setLoading] = useState(true);
   useScrollAnimation();
 
+  useEffect(() => {
+    getProject(id)
+      .then((data) => { setP(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div style={{ padding: 120, color: 'var(--cream)', textAlign: 'center' }}>Loading…</div>;
   if (!p) return <div style={{ padding: 120, color: 'var(--cream)' }}>Project not found.</div>;
 
   return (
@@ -37,57 +46,63 @@ export default function ProjectDetail() {
       </div>
 
       <div className="detail-wrap">
-        <div className="specs-bar fade-up">
-          {Object.entries(p.specs).map(([k, v]) => (
-            <div key={k} className="spec-item">
-              <span className="spec-label">{k}</span>
-              <span className="spec-value">{v}</span>
-            </div>
-          ))}
-        </div>
+        {p.specs && Object.keys(p.specs).length > 0 && (
+          <div className="specs-bar fade-up">
+            {Object.entries(p.specs).map(([k, v]) => (
+              <div key={k} className="spec-item">
+                <span className="spec-label">{k}</span>
+                <span className="spec-value">{v}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="two-col fade-up">
           <div>
             <div className="section-label">Project Overview</div>
             <div className="gold-bar"></div>
             <h2 className="detail-section-title">About This Project</h2>
-            <p className="body-text">{p.overview[0]}</p>
-            <p className="body-text" style={{ marginTop: 16 }}>{p.overview[1]}</p>
+            <p className="body-text">{p.overview?.[0]}</p>
+            {p.overview?.[1] && <p className="body-text" style={{ marginTop: 16 }}>{p.overview[1]}</p>}
           </div>
           <div>
             <div className="section-label">Location &amp; Area</div>
             <div className="gold-bar"></div>
             <h2 className="detail-section-title">The Neighbourhood</h2>
-            <p className="body-text">{p.area[0]}</p>
-            <p className="body-text" style={{ marginTop: 16 }}>{p.area[1]}</p>
+            <p className="body-text">{p.area?.[0]}</p>
+            {p.area?.[1] && <p className="body-text" style={{ marginTop: 16 }}>{p.area[1]}</p>}
           </div>
         </div>
 
-        <div className="gallery-section fade-up">
-          <div className="section-label">Photo Gallery</div>
-          <div className="gold-bar"></div>
-          <h2 className="detail-section-title">Visual Walkthrough</h2>
-          <div className="gallery-grid">
-            {p.gallery.map((g, i) => (
-              <div key={i} className="gallery-item">
-                <img src={`${g}?w=800&q=80`} alt={p.name} loading="lazy" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="fade-up" style={{ marginBottom: 80 }}>
-          <div className="section-label">Features &amp; Highlights</div>
-          <div className="gold-bar"></div>
-          <h2 className="detail-section-title">What Was Delivered</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, marginTop: 32 }}>
-            <ul className="amenities-list">
-              {p.amenities.map((a, i) => (
-                <li key={i}><i className="fa fa-check"></i> {a}</li>
+        {p.gallery?.length > 0 && (
+          <div className="gallery-section fade-up">
+            <div className="section-label">Photo Gallery</div>
+            <div className="gold-bar"></div>
+            <h2 className="detail-section-title">Visual Walkthrough</h2>
+            <div className="gallery-grid">
+              {p.gallery.map((g, i) => (
+                <div key={i} className="gallery-item">
+                  <img src={g} alt={p.name} loading="lazy" />
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
-        </div>
+        )}
+
+        {p.amenities?.length > 0 && (
+          <div className="fade-up" style={{ marginBottom: 80 }}>
+            <div className="section-label">Features &amp; Highlights</div>
+            <div className="gold-bar"></div>
+            <h2 className="detail-section-title">What Was Delivered</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, marginTop: 32 }}>
+              <ul className="amenities-list">
+                {p.amenities.map((a, i) => (
+                  <li key={i}><i className="fa fa-check"></i> {a}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
 
         <div className="detail-cta fade-up">
           <div>

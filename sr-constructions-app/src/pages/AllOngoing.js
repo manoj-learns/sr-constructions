@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UPCOMING } from '../data/projects';
+import { getOngoing } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
 
 const FILTERS = ['all', 'Available', 'Residential', 'Plot Layout'];
 
 export default function AllOngoing() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState('all');
   const navigate = useNavigate();
   useScrollAnimation();
 
-  const filtered = UPCOMING.filter((u) => {
+  useEffect(() => {
+    getOngoing()
+      .then((data) => { setItems(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = items.filter((u) => {
     if (active === 'all') return true;
     if (active === 'Available') return u.badge === 'Available';
     return u.type === active;
@@ -47,36 +55,40 @@ export default function AllOngoing() {
 
       <div className="listing-section">
         <div className="listing-inner">
-          <div className="listing-grid">
-            {filtered.map((u, i) => (
-              <div
-                key={u.id}
-                className="listing-card fade-up"
-                style={{ transitionDelay: `${(i % 3) * 0.07}s` }}
-                onClick={() => navigate(`/ongoing/${u.id}`)}
-              >
-                <div className="listing-card-img-wrap">
-                  <img className="listing-card-img" src={u.img} alt={u.name} />
-                  <div className="listing-badge badge-available">
-                    <span className="bdot"></span>{u.badge}
+          {loading ? (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '60px 0' }}>Loading projects…</p>
+          ) : (
+            <div className="listing-grid">
+              {filtered.map((u, i) => (
+                <div
+                  key={u.id}
+                  className="listing-card fade-up"
+                  style={{ transitionDelay: `${(i % 3) * 0.07}s` }}
+                  onClick={() => navigate(`/ongoing/${u.id}`)}
+                >
+                  <div className="listing-card-img-wrap">
+                    <img className="listing-card-img" src={u.img} alt={u.name} />
+                    <div className="listing-badge badge-available">
+                      <span className="bdot"></span>{u.badge}
+                    </div>
+                  </div>
+                  <div className="listing-card-body">
+                    <div className="listing-card-name">{u.name}</div>
+                    <div className="listing-card-location">
+                      <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
+                      {u.location}
+                    </div>
+                    <div className="listing-card-completion"><strong>{u.completion}</strong></div>
+                    <div className="listing-card-desc">{u.desc}</div>
+                    <div className="listing-card-footer">
+                      <span className="register-pill">Enquire Now</span>
+                      <span className="listing-card-link">View Details <i className="fa fa-arrow-right"></i></span>
+                    </div>
                   </div>
                 </div>
-                <div className="listing-card-body">
-                  <div className="listing-card-name">{u.name}</div>
-                  <div className="listing-card-location">
-                    <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
-                    {u.location}
-                  </div>
-                  <div className="listing-card-completion"><strong>{u.completion}</strong></div>
-                  <div className="listing-card-desc">{u.desc}</div>
-                  <div className="listing-card-footer">
-                    <span className="register-pill">Enquire Now</span>
-                    <span className="listing-card-link">View Details <i className="fa fa-arrow-right"></i></span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

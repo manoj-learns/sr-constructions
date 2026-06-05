@@ -6,6 +6,14 @@ import AllProjects from './pages/AllProjects';
 import AllOngoing from './pages/AllOngoing';
 import ProjectDetail from './pages/ProjectDetail';
 import OngoingDetail from './pages/OngoingDetail';
+import AdminLogin from './admin/AdminLogin';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/AdminDashboard';
+import AdminContacts from './admin/AdminContacts';
+import AdminProjects from './admin/AdminProjects';
+import AdminOngoing from './admin/AdminOngoing';
+import AdminProjectEdit from './admin/AdminProjectEdit';
+import AdminOngoingEdit from './admin/AdminOngoingEdit';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -13,7 +21,7 @@ function ScrollToTop() {
   return null;
 }
 
-function AppInner() {
+function PublicLayout() {
   return (
     <>
       <Navbar />
@@ -32,7 +40,20 @@ function AppInner() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppInner />
+      <Routes>
+        {/* Admin */}
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="contacts" element={<AdminContacts />} />
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="projects/:id" element={<AdminProjectEdit />} />
+          <Route path="ongoing" element={<AdminOngoing />} />
+          <Route path="ongoing/:id" element={<AdminOngoingEdit />} />
+        </Route>
+        {/* Public site */}
+        <Route path="/*" element={<PublicLayout />} />
+      </Routes>
     </BrowserRouter>
   );
 }

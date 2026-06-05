@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PROJECTS } from '../data/projects';
+import { getProjects } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
 
 const FILTERS = ['all', 'Residential', 'Commercial', 'Plot Layout'];
 
 export default function AllProjects() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState('all');
   const navigate = useNavigate();
   useScrollAnimation();
 
-  const filtered = active === 'all' ? PROJECTS : PROJECTS.filter((p) => p.tag === active);
+  useEffect(() => {
+    getProjects()
+      .then((data) => { setProjects(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const filtered = active === 'all' ? projects : projects.filter((p) => p.tag === active);
 
   return (
     <>
@@ -40,34 +48,38 @@ export default function AllProjects() {
 
       <div className="listing-section">
         <div className="listing-inner">
-          <div className="listing-grid">
-            {filtered.map((p, i) => (
-              <div
-                key={p.id}
-                className="listing-card fade-up"
-                style={{ transitionDelay: `${(i % 3) * 0.07}s` }}
-                onClick={() => navigate(`/projects/${p.id}`)}
-              >
-                <div className="listing-card-img-wrap">
-                  <img className="listing-card-img" src={p.img} alt={p.name} />
-                  <div className="listing-badge">Sold Out</div>
-                </div>
-                <div className="listing-card-body">
-                  <div className="listing-card-tag">{p.tag}</div>
-                  <div className="listing-card-name">{p.name}</div>
-                  <div className="listing-card-location">
-                    <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
-                    {p.location}
+          {loading ? (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '60px 0' }}>Loading projects…</p>
+          ) : (
+            <div className="listing-grid">
+              {filtered.map((p, i) => (
+                <div
+                  key={p.id}
+                  className="listing-card fade-up"
+                  style={{ transitionDelay: `${(i % 3) * 0.07}s` }}
+                  onClick={() => navigate(`/projects/${p.id}`)}
+                >
+                  <div className="listing-card-img-wrap">
+                    <img className="listing-card-img" src={p.img} alt={p.name} />
+                    <div className="listing-badge">Sold Out</div>
                   </div>
-                  <div className="listing-card-desc">{p.desc}</div>
-                  <div className="listing-card-footer">
-                    <span className="listing-card-year">{p.year}</span>
-                    <span className="listing-card-link">View Details <i className="fa fa-arrow-right"></i></span>
+                  <div className="listing-card-body">
+                    <div className="listing-card-tag">{p.tag}</div>
+                    <div className="listing-card-name">{p.name}</div>
+                    <div className="listing-card-location">
+                      <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
+                      {p.location}
+                    </div>
+                    <div className="listing-card-desc">{p.desc}</div>
+                    <div className="listing-card-footer">
+                      <span className="listing-card-year">{p.year}</span>
+                      <span className="listing-card-link">View Details <i className="fa fa-arrow-right"></i></span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
