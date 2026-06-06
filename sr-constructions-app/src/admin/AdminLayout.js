@@ -23,7 +23,7 @@ export default function AdminLayout() {
 
   return (
     <div style={s.shell}>
-      <aside style={s.sidebar}>
+      <header style={s.topbar}>
         <div style={s.brand}>
           <div style={s.brandIcon}><span style={s.brandText}>SR</span></div>
           <div>
@@ -31,18 +31,25 @@ export default function AdminLayout() {
             <div style={s.brandSub}>Admin Panel</div>
           </div>
         </div>
+
         <nav style={s.nav}>
           {NAV.map(({ to, label, icon }) => (
-            <Link key={to} to={to} style={{ ...s.navItem, ...(pathname === to ? s.navActive : {}) }}>
-              <i className={`fa ${icon}`} style={s.navIcon}></i>
+            <Link
+              key={to}
+              to={to}
+              style={{ ...s.navItem, ...(pathname.startsWith(to) ? s.navActive : {}) }}
+            >
+              <i className={`fa ${icon}`}></i>
               {label}
             </Link>
           ))}
         </nav>
+
         <button onClick={logout} style={s.logout}>
-          <i className="fa fa-sign-out-alt" style={{ marginRight: 8 }}></i> Logout
+          <i className="fa fa-sign-out-alt" style={{ marginRight: 6 }}></i> Logout
         </button>
-      </aside>
+      </header>
+
       <main style={s.main}>
         <Outlet />
       </main>
@@ -51,17 +58,38 @@ export default function AdminLayout() {
 }
 
 const s = {
-  shell: { display: 'flex', minHeight: '100vh', background: '#111', fontFamily: 'Barlow, sans-serif' },
-  sidebar: { width: 240, background: '#0e0e0e', borderRight: '1px solid rgba(184,148,63,.15)', display: 'flex', flexDirection: 'column', padding: '32px 0', flexShrink: 0, position: 'fixed', left: 0, top: 0, height: '100vh', zIndex: 100, overflowY: 'auto' },
-  brand: { display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px 32px', borderBottom: '1px solid rgba(184,148,63,.1)', marginBottom: 24 },
-  brandIcon: { width: 40, height: 40, background: '#b8943f', display: 'flex', alignItems: 'center', justifyContent: 'center', clipPath: 'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)', flexShrink: 0 },
-  brandText: { fontFamily: "'Playfair Display', serif", fontWeight: 800, fontSize: 16, color: '#0e0e0e' },
-  brandName: { fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700, color: '#fff' },
-  brandSub: { fontSize: 11, color: '#888', letterSpacing: 1 },
-  nav: { display: 'flex', flexDirection: 'column', gap: 4, padding: '0 12px', flex: 1 },
-  navItem: { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', color: '#888880', textDecoration: 'none', fontSize: 14, borderRadius: 4, transition: 'all .2s' },
+  shell: { minHeight: '100vh', background: '#141414', fontFamily: 'Barlow, sans-serif' },
+  topbar: {
+    position: 'fixed', top: 0, left: 0, right: 0, height: 62, zIndex: 200,
+    background: '#0e0e0e', borderBottom: '1px solid rgba(184,148,63,.2)',
+    display: 'flex', alignItems: 'center', padding: '0 28px', gap: 24,
+    boxShadow: '0 2px 12px rgba(0,0,0,.4)',
+  },
+  brand: {
+    display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
+    paddingRight: 24, borderRight: '1px solid rgba(255,255,255,.07)',
+  },
+  brandIcon: {
+    width: 34, height: 34, background: '#b8943f', display: 'flex',
+    alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+    clipPath: 'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)',
+  },
+  brandText: { fontFamily: "'Playfair Display', serif", fontWeight: 800, fontSize: 14, color: '#0e0e0e' },
+  brandName: { fontFamily: "'Playfair Display', serif", fontSize: 13, fontWeight: 700, color: '#f5f0e8', lineHeight: 1.2 },
+  brandSub: { fontSize: 10, color: '#666', letterSpacing: 1.5, textTransform: 'uppercase' },
+  nav: { display: 'flex', alignItems: 'center', gap: 2, flex: 1 },
+  navItem: {
+    display: 'flex', alignItems: 'center', gap: 7, padding: '8px 16px',
+    color: '#888', textDecoration: 'none', fontSize: 13,
+    fontFamily: 'Barlow, sans-serif', borderRadius: 4, transition: 'all .15s',
+    whiteSpace: 'nowrap',
+  },
   navActive: { background: 'rgba(184,148,63,.12)', color: '#b8943f' },
-  navIcon: { width: 16, textAlign: 'center' },
-  logout: { margin: '0 12px', padding: '10px 12px', background: 'none', border: '1px solid rgba(255,255,255,.08)', color: '#888', fontSize: 13, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center' },
-  main: { flex: 1, padding: 40, overflowY: 'auto', background: '#141414', marginLeft: 240, minHeight: '100vh' },
+  logout: {
+    flexShrink: 0, background: 'none', border: '1px solid rgba(255,255,255,.1)',
+    color: '#888', fontSize: 12, cursor: 'pointer', padding: '7px 16px',
+    borderRadius: 4, display: 'flex', alignItems: 'center',
+    fontFamily: 'Barlow, sans-serif', transition: 'all .15s',
+  },
+  main: { minHeight: '100vh', padding: '102px 40px 40px', background: '#141414' },
 };
