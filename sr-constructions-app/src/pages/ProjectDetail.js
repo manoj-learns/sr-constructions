@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getProject } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
+import BrochureModal from '../components/BrochureModal';
 
 export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [p, setP] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showBrochure, setShowBrochure] = useState(false);
   useScrollAnimation();
 
   useEffect(() => {
@@ -17,8 +19,8 @@ export default function ProjectDetail() {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div style={{ padding: 120, color: 'var(--cream)', textAlign: 'center' }}>Loading…</div>;
-  if (!p) return <div style={{ padding: 120, color: 'var(--cream)' }}>Project not found.</div>;
+  if (loading) return <div style={{ padding: 120, color: 'var(--text-muted)', textAlign: 'center' }}>Loading…</div>;
+  if (!p) return <div style={{ padding: 120, color: 'var(--text-muted)' }}>Project not found.</div>;
 
   return (
     <>
@@ -104,6 +106,23 @@ export default function ProjectDetail() {
           </div>
         )}
 
+        {p.mapUrl && (
+          <div className="fade-up" style={{ marginBottom: 80 }}>
+            <div className="section-label">Location</div>
+            <div className="gold-bar"></div>
+            <h2 className="detail-section-title">Find Us on the Map</h2>
+            <iframe
+              src={p.mapUrl}
+              title="Project Location"
+              width="100%"
+              height="380"
+              style={{ border: 0, display: 'block', marginTop: 24 }}
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
+        )}
+
         <div className="detail-cta fade-up">
           <div>
             <h3>Interested in a similar project?</h3>
@@ -113,12 +132,25 @@ export default function ProjectDetail() {
             <button className="btn-gold" onClick={() => { navigate('/'); setTimeout(() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }), 200); }}>
               Contact Us <i className="fa fa-arrow-right"></i>
             </button>
+            {p.brochureUrl && (
+              <button className="btn-outline" onClick={() => setShowBrochure(true)}>
+                <i className="fa fa-file-pdf"></i> Download Brochure
+              </button>
+            )}
             <button className="btn-outline" onClick={() => navigate('/projects')}>
               <i className="fa fa-th-large"></i> All Projects
             </button>
           </div>
         </div>
       </div>
+
+      {showBrochure && (
+        <BrochureModal
+          projectName={p.name}
+          brochureUrl={p.brochureUrl}
+          onClose={() => setShowBrochure(false)}
+        />
+      )}
 
       <MiniFooter />
     </>

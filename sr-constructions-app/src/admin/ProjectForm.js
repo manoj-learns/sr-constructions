@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadImage } from '../services/db';
+import { uploadImage, uploadFile } from '../services/db';
 
 export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) {
   const [form, setForm] = useState({
@@ -21,6 +21,29 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
   const [uploading, setUploading] = useState(false);
   const [coverProgress, setCoverProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
+
+  const [mapUrl, setMapUrl] = useState(initial.mapUrl || '');
+  const [brochureUrl, setBrochureUrl] = useState(initial.brochureUrl || '');
+  const [brochureFile, setBrochureFile] = useState(null);
+  const [brochureUploading, setBrochureUploading] = useState(false);
+  const [brochureProgress, setBrochureProgress] = useState(0);
+
+  const onBrochureFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBrochureUploading(true);
+    setBrochureProgress(0);
+    try {
+      const url = await uploadFile(file, 'brochures', setBrochureProgress);
+      setBrochureUrl(url);
+      setBrochureFile(file.name);
+    } catch (err) {
+      setUploadError('Brochure upload failed: ' + err.message);
+    }
+    setBrochureUploading(false);
+    setBrochureProgress(0);
+    e.target.value = '';
+  };
 
   const [gallery, setGallery] = useState(initial.gallery || []);
   const [galleryInput, setGalleryInput] = useState('');
@@ -100,6 +123,8 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
       amenities: form.amenities.split('\n').filter(Boolean),
       specs,
       gallery: finalGallery,
+      mapUrl: mapUrl.trim() || '',
+      brochureUrl: brochureUrl.trim() || '',
     };
     onSave(data);
   };
@@ -225,9 +250,51 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
         </Field>
       </Section>
 
+      <Section title="Google Maps Location">
+        <Field label="Google Maps Embed URL">
+          <input
+            style={fs.input}
+            value={mapUrl}
+            onChange={(e) => setMapUrl(e.target.value)}
+            placeholder="Paste embed URL from Google Maps → Share → Embed a map"
+          />
+        </Field>
+        {mapUrl && (
+          <iframe src={mapUrl} width="100%" height="200" style={{ border: 0, display: 'block', marginTop: 8 }} allowFullScreen loading="lazy" title="Map preview" />
+        )}
+        <p style={fs.hint}>Go to Google Maps → search the location → Share → Embed a map → Copy the src URL from the iframe code.</p>
+      </Section>
+
+      <Section title="Project Brochure (PDF)">
+        <div style={fs.imgRow}>
+          <label style={brochureUploading ? fs.uploadBtnDisabled : fs.uploadBtn}>
+            <i className="fa fa-file-pdf" style={{ marginRight: 8 }}></i>
+            {brochureUploading ? `Uploading ${brochureProgress}%…` : brochureFile ? 'Change PDF' : 'Upload PDF'}
+            <input type="file" accept=".pdf" onChange={onBrochureFile} style={{ display: 'none' }} disabled={brochureUploading} />
+          </label>
+          <span style={fs.orText}>or</span>
+          <Field label="Paste PDF URL">
+            <input
+              style={{ ...fs.input, minWidth: 320 }}
+              value={brochureUrl}
+              onChange={(e) => { setBrochureUrl(e.target.value); setBrochureFile(null); }}
+              placeholder="https://drive.google.com/..."
+            />
+          </Field>
+        </div>
+        {brochureUploading && <ProgressBar pct={brochureProgress} />}
+        {brochureUrl && !brochureUploading && (
+          <div style={{ fontSize: 12, color: '#7de89a', marginTop: 6 }}>
+            <i className="fa fa-check-circle" style={{ marginRight: 6 }}></i>
+            Brochure set — visitors will need to submit an enquiry to download it.
+          </div>
+        )}
+        <p style={fs.hint}>Upload a PDF brochure. Visitors must submit their contact details before downloading.</p>
+      </Section>
+
       <div style={fs.footer}>
         <button type="button" onClick={onCancel} style={fs.cancel}>Cancel</button>
-        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading}>
+        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading || brochureUploading}>
           {saving ? 'Saving…' : 'Save Project'}
         </button>
       </div>

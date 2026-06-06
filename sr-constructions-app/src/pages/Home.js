@@ -103,7 +103,7 @@ export default function Home() {
               <div className="section-label">Currently Available</div>
               <div className="gold-bar"></div>
               <h2 className="section-title">Ongoing Projects</h2>
-              <p style={{ color: 'var(--text-muted)', maxWidth: 560, margin: '16px 0 0', fontSize: 15, lineHeight: 1.7 }}>
+              <p style={{ color: 'var(--text-light)', maxWidth: 560, margin: '16px 0 0', fontSize: 15, lineHeight: 1.7 }}>
                 Plots and residences currently available — secure your space in tomorrow's prime locations today.
               </p>
             </div>

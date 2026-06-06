@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadImage } from '../services/db';
+import { uploadImage, uploadFile } from '../services/db';
 
 export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) {
   const [form, setForm] = useState({
@@ -27,6 +27,12 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
   const [galleryInput, setGalleryInput] = useState('');
   const [galleryUploading, setGalleryUploading] = useState(false);
   const [galleryProgress, setGalleryProgress] = useState(0);
+
+  const [mapUrl, setMapUrl] = useState(initial.mapUrl || '');
+  const [brochureUrl, setBrochureUrl] = useState(initial.brochureUrl || '');
+  const [brochureFile, setBrochureFile] = useState(null);
+  const [brochureUploading, setBrochureUploading] = useState(false);
+  const [brochureProgress, setBrochureProgress] = useState(0);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -65,6 +71,23 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
 
   const removeGallery = (idx) => setGallery((g) => g.filter((_, i) => i !== idx));
 
+  const onBrochureFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBrochureFile(file);
+    setBrochureUploading(true);
+    setBrochureProgress(0);
+    try {
+      const url = await uploadFile(file, 'brochures', setBrochureProgress);
+      setBrochureUrl(url);
+    } catch (err) {
+      setUploadError('Brochure upload failed: ' + err.message);
+    }
+    setBrochureUploading(false);
+    setBrochureProgress(0);
+    e.target.value = '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUploadError('');
@@ -101,6 +124,8 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
       highlights: form.highlights.split('\n').filter(Boolean),
       specs,
       gallery: finalGallery,
+      mapUrl: mapUrl.trim() || '',
+      brochureUrl: brochureUrl.trim() || '',
     };
     onSave(data);
   };
@@ -228,9 +253,56 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
         </Field>
       </Section>
 
+      <Section title="Google Maps Embed">
+        <Field label="Google Maps Embed URL">
+          <input
+            style={fs.input}
+            value={mapUrl}
+            onChange={(e) => setMapUrl(e.target.value)}
+            placeholder="https://www.google.com/maps/embed?pb=..."
+          />
+        </Field>
+        <p style={fs.hint}>Go to Google Maps → Share → Embed a map → Copy the src URL from the iframe code.</p>
+        {mapUrl && (
+          <iframe
+            src={mapUrl}
+            title="Map Preview"
+            width="100%"
+            height="220"
+            style={{ border: 0, marginTop: 12, display: 'block' }}
+            allowFullScreen
+            loading="lazy"
+          />
+        )}
+      </Section>
+
+      <Section title="Project Brochure (PDF)">
+        <div style={fs.imgRow}>
+          <label style={brochureUploading ? fs.uploadBtnDisabled : fs.uploadBtn}>
+            <i className="fa fa-file-pdf" style={{ marginRight: 8 }}></i>
+            {brochureUploading ? `Uploading ${brochureProgress}%…` : brochureFile ? 'Change PDF' : 'Upload PDF'}
+            <input type="file" accept="application/pdf" onChange={onBrochureFile} style={{ display: 'none' }} disabled={brochureUploading} />
+          </label>
+          <span style={fs.orText}>or</span>
+          <Field label="Paste Brochure URL">
+            <input
+              style={{ ...fs.input, minWidth: 320 }}
+              value={brochureUrl}
+              onChange={(e) => { setBrochureUrl(e.target.value); setBrochureFile(null); }}
+              placeholder="https://res.cloudinary.com/..."
+            />
+          </Field>
+        </div>
+        {brochureUploading && <ProgressBar pct={brochureProgress} />}
+        {brochureUrl && !brochureUploading && (
+          <p style={{ ...fs.hint, color: '#7de89a' }}><i className="fa fa-check-circle" style={{ marginRight: 6 }}></i>Brochure ready: <a href={brochureUrl} target="_blank" rel="noreferrer" style={{ color: '#b8943f' }}>Preview PDF</a></p>
+        )}
+        <p style={fs.hint}>Visitors must submit an enquiry form before they can download the brochure.</p>
+      </Section>
+
       <div style={fs.footer}>
         <button type="button" onClick={onCancel} style={fs.cancel}>Cancel</button>
-        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading}>
+        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading || brochureUploading}>
           {saving ? 'Saving…' : 'Save Project'}
         </button>
       </div>

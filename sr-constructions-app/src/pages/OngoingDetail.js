@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getOngoingById } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
+import BrochureModal from '../components/BrochureModal';
 
 export default function OngoingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [u, setU] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showBrochure, setShowBrochure] = useState(false);
   useScrollAnimation();
 
   useEffect(() => {
@@ -22,8 +24,8 @@ export default function OngoingDetail() {
     setTimeout(() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' }), 200);
   };
 
-  if (loading) return <div style={{ padding: 120, color: 'var(--cream)', textAlign: 'center' }}>Loading…</div>;
-  if (!u) return <div style={{ padding: 120, color: 'var(--cream)' }}>Project not found.</div>;
+  if (loading) return <div style={{ padding: 120, color: 'var(--text-muted)', textAlign: 'center' }}>Loading…</div>;
+  if (!u) return <div style={{ padding: 120, color: 'var(--text-muted)' }}>Project not found.</div>;
 
   return (
     <>
@@ -142,12 +144,29 @@ export default function OngoingDetail() {
             <h2 className="detail-section-title">Key Highlights</h2>
             <ul style={{ listStyle: 'none', marginTop: 32 }}>
               {u.highlights.map((h, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontSize: 15, color: 'var(--text-light)', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,.05)' }}>
+                <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, fontSize: 15, color: 'var(--text-light)', padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
                   <i className="fa fa-circle" style={{ color: 'var(--gold)', fontSize: 7, marginTop: 6, flexShrink: 0 }}></i>
                   {h}
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {u.mapUrl && (
+          <div className="fade-up" style={{ marginBottom: 80 }}>
+            <div className="section-label">Location</div>
+            <div className="gold-bar"></div>
+            <h2 className="detail-section-title">Find Us on the Map</h2>
+            <iframe
+              src={u.mapUrl}
+              title="Project Location"
+              width="100%"
+              height="380"
+              style={{ border: 0, display: 'block', marginTop: 24 }}
+              allowFullScreen
+              loading="lazy"
+            />
           </div>
         )}
 
@@ -160,12 +179,25 @@ export default function OngoingDetail() {
             <button className="btn-gold" onClick={goToContact}>
               Contact Us <i className="fa fa-arrow-right"></i>
             </button>
+            {u.brochureUrl && (
+              <button className="btn-outline" onClick={() => setShowBrochure(true)}>
+                <i className="fa fa-file-pdf"></i> Download Brochure
+              </button>
+            )}
             <button className="btn-outline" onClick={() => navigate('/ongoing')}>
               <i className="fa fa-th-large"></i> All Ongoing
             </button>
           </div>
         </div>
       </div>
+
+      {showBrochure && (
+        <BrochureModal
+          projectName={u.name}
+          brochureUrl={u.brochureUrl}
+          onClose={() => setShowBrochure(false)}
+        />
+      )}
 
       <MiniFooter />
     </>

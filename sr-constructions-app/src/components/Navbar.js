@@ -71,11 +71,11 @@ export default function Navbar() {
         <button className="mobile-close" onClick={() => setMenuOpen(false)}>
           <i className="fa fa-times"></i>
         </button>
-        <button onClick={() => scrollTo('about-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--white)'}}>About</button>
-        <button onClick={() => scrollTo('vision-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--white)'}}>Vision</button>
-        <button onClick={() => scrollTo('projects-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--white)'}}>Projects</button>
-        <button onClick={() => scrollTo('upcoming-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--white)'}}>Ongoing Projects</button>
-        <button onClick={() => scrollTo('contact-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--white)'}}>Contact</button>
+        <button onClick={() => scrollTo('about-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--text)'}}>About</button>
+        <button onClick={() => scrollTo('vision-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--text)'}}>Vision</button>
+        <button onClick={() => scrollTo('projects-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--text)'}}>Projects</button>
+        <button onClick={() => scrollTo('upcoming-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--text)'}}>Ongoing Projects</button>
+        <button onClick={() => scrollTo('contact-section')} style={{all:'unset',cursor:'pointer',fontFamily:"'Playfair Display',serif",fontSize:36,fontWeight:700,color:'var(--text)'}}>Contact</button>
       </div>
     </>
   );

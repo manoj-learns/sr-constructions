@@ -52,7 +52,7 @@ export default function AdminLayout() {
 
 const s = {
   shell: { display: 'flex', minHeight: '100vh', background: '#111', fontFamily: 'Barlow, sans-serif' },
-  sidebar: { width: 240, background: '#0e0e0e', borderRight: '1px solid rgba(184,148,63,.15)', display: 'flex', flexDirection: 'column', padding: '32px 0', flexShrink: 0, position: 'sticky', top: 0, height: '100vh' },
+  sidebar: { width: 240, background: '#0e0e0e', borderRight: '1px solid rgba(184,148,63,.15)', display: 'flex', flexDirection: 'column', padding: '32px 0', flexShrink: 0, position: 'fixed', left: 0, top: 0, height: '100vh', zIndex: 100, overflowY: 'auto' },
   brand: { display: 'flex', alignItems: 'center', gap: 12, padding: '0 24px 32px', borderBottom: '1px solid rgba(184,148,63,.1)', marginBottom: 24 },
   brandIcon: { width: 40, height: 40, background: '#b8943f', display: 'flex', alignItems: 'center', justifyContent: 'center', clipPath: 'polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)', flexShrink: 0 },
   brandText: { fontFamily: "'Playfair Display', serif", fontWeight: 800, fontSize: 16, color: '#0e0e0e' },
@@ -63,5 +63,5 @@ const s = {
   navActive: { background: 'rgba(184,148,63,.12)', color: '#b8943f' },
   navIcon: { width: 16, textAlign: 'center' },
   logout: { margin: '0 12px', padding: '10px 12px', background: 'none', border: '1px solid rgba(255,255,255,.08)', color: '#888', fontSize: 13, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center' },
-  main: { flex: 1, padding: 40, overflowY: 'auto', background: '#141414' },
+  main: { flex: 1, padding: 40, overflowY: 'auto', background: '#141414', marginLeft: 240, minHeight: '100vh' },
 };
