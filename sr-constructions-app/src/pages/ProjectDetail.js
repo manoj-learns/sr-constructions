@@ -119,7 +119,7 @@ export default function ProjectDetail() {
               style={{ border: 0, display: 'block', marginTop: 24 }}
               allowFullScreen
               loading="lazy"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
         )}

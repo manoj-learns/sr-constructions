@@ -254,15 +254,19 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
       </Section>
 
       <Section title="Google Maps Embed">
-        <Field label="Google Maps Embed URL">
-          <input
-            style={fs.input}
+        <Field label="Google Maps Embed Code or URL">
+          <textarea
+            style={{ ...fs.input, minHeight: 80, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }}
             value={mapUrl}
-            onChange={(e) => setMapUrl(e.target.value)}
-            placeholder="https://www.google.com/maps/embed?pb=..."
+            onChange={(e) => {
+              const val = e.target.value;
+              const match = val.match(/src="([^"]+)"/);
+              setMapUrl(match ? match[1] : val);
+            }}
+            placeholder={'Paste the full <iframe> embed code or just the src URL'}
           />
         </Field>
-        <p style={fs.hint}>Go to Google Maps → Share → Embed a map → Copy the src URL from the iframe code.</p>
+        <p style={fs.hint}>Google Maps → Share → Embed a map → copy the entire iframe code or just the src URL. Both work.</p>
         {mapUrl && (
           <iframe
             src={mapUrl}
@@ -272,6 +276,7 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
             style={{ border: 0, marginTop: 12, display: 'block' }}
             allowFullScreen
             loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
           />
         )}
       </Section>

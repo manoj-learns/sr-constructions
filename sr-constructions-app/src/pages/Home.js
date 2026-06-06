@@ -4,15 +4,28 @@ import Footer from '../components/Footer';
 import useScrollAnimation from '../components/useScrollAnimation';
 import { addContact, getProjects, getOngoing } from '../services/db';
 
+const HERO_SLIDES = [
+  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=1920&q=80',
+  'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=80',
+];
+
 export default function Home() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [ongoing, setOngoing] = useState([]);
+  const [slide, setSlide] = useState(0);
   useScrollAnimation();
 
   useEffect(() => {
     getProjects().then(setProjects).catch(() => {});
     getOngoing().then(setOngoing).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const t = setInterval(() => setSlide((s) => (s + 1) % HERO_SLIDES.length), 5500);
+    return () => clearInterval(t);
   }, []);
 
   const handleContactSubmit = async (e) => {
@@ -26,7 +39,17 @@ export default function Home() {
     <>
       {/* Hero */}
       <section id="hero-section">
-        <div className="hero-bg"></div>
+        {HERO_SLIDES.map((src, i) => (
+          <div
+            key={i}
+            className="hero-bg"
+            style={{
+              backgroundImage: `url('${src}')`,
+              opacity: i === slide ? 1 : 0,
+              transition: 'opacity 1.5s ease',
+            }}
+          />
+        ))}
         <div className="hero-overlay"></div>
         <div className="hero-content">
           <div className="hero-eyebrow">Est. 2007</div>

@@ -251,18 +251,22 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
       </Section>
 
       <Section title="Google Maps Location">
-        <Field label="Google Maps Embed URL">
-          <input
-            style={fs.input}
+        <Field label="Google Maps Embed Code or URL">
+          <textarea
+            style={{ ...fs.input, minHeight: 80, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }}
             value={mapUrl}
-            onChange={(e) => setMapUrl(e.target.value)}
-            placeholder="Paste embed URL from Google Maps → Share → Embed a map"
+            onChange={(e) => {
+              const val = e.target.value;
+              const match = val.match(/src="([^"]+)"/);
+              setMapUrl(match ? match[1] : val);
+            }}
+            placeholder={'Paste the full <iframe> embed code or just the src URL'}
           />
         </Field>
         {mapUrl && (
-          <iframe src={mapUrl} width="100%" height="200" style={{ border: 0, display: 'block', marginTop: 8 }} allowFullScreen loading="lazy" title="Map preview" />
+          <iframe src={mapUrl} width="100%" height="200" style={{ border: 0, display: 'block', marginTop: 8 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="Map preview" />
         )}
-        <p style={fs.hint}>Go to Google Maps → search the location → Share → Embed a map → Copy the src URL from the iframe code.</p>
+        <p style={fs.hint}>Google Maps → Share → Embed a map → copy the entire iframe code or just the src URL. Both work.</p>
       </Section>
 
       <Section title="Project Brochure (PDF)">
