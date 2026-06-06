@@ -6,6 +6,7 @@ import AllProjects from './pages/AllProjects';
 import AllOngoing from './pages/AllOngoing';
 import ProjectDetail from './pages/ProjectDetail';
 import OngoingDetail from './pages/OngoingDetail';
+import Chatbot from './components/Chatbot';
 import AdminLogin from './admin/AdminLogin';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
@@ -26,6 +27,7 @@ function PublicLayout() {
     <>
       <Navbar />
       <ScrollToTop />
+      <Chatbot />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<AllProjects />} />
