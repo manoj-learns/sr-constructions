@@ -11,6 +11,7 @@ export default function OngoingDetail() {
   const [u, setU] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showBrochure, setShowBrochure] = useState(false);
+  const [activePdf, setActivePdf] = useState(null);
   useScrollAnimation();
 
   useEffect(() => {
@@ -153,6 +154,31 @@ export default function OngoingDetail() {
           </div>
         )}
 
+        {(() => {
+          const pdfs = u.pdfs?.length ? u.pdfs : u.brochureUrl ? [{ name: 'Brochure', url: u.brochureUrl }] : [];
+          return pdfs.length > 0 ? (
+            <div className="fade-up" style={{ marginBottom: 60 }}>
+              <div className="section-label">Documents</div>
+              <div className="gold-bar"></div>
+              <h2 className="detail-section-title">Downloads</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 24 }}>
+                {pdfs.map((pdf, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                    <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 20, flexShrink: 0 }}></i>
+                    <span style={{ flex: 1, fontSize: 15, color: 'var(--text)' }}>{pdf.name}</span>
+                    <a href={pdf.url} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ fontSize: 12, padding: '8px 16px', textDecoration: 'none' }}>
+                      <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
+                    </a>
+                    <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
+                      <i className="fa fa-download" style={{ marginRight: 6 }}></i>Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null;
+        })()}
+
         {u.mapUrl && (
           <div className="fade-up" style={{ marginBottom: 80 }}>
             <div className="section-label">Location</div>
@@ -180,11 +206,6 @@ export default function OngoingDetail() {
             <button className="btn-gold" onClick={goToContact}>
               Contact Us <i className="fa fa-arrow-right"></i>
             </button>
-            {u.brochureUrl && (
-              <button className="btn-outline" onClick={() => setShowBrochure(true)}>
-                <i className="fa fa-file-pdf"></i> Download Brochure
-              </button>
-            )}
             <button className="btn-outline" onClick={() => navigate('/ongoing')}>
               <i className="fa fa-th-large"></i> All Ongoing
             </button>
@@ -192,11 +213,11 @@ export default function OngoingDetail() {
         </div>
       </div>
 
-      {showBrochure && (
+      {showBrochure && activePdf && (
         <BrochureModal
-          projectName={u.name}
-          brochureUrl={u.brochureUrl}
-          onClose={() => setShowBrochure(false)}
+          projectName={`${u.name} — ${activePdf.name}`}
+          brochureUrl={activePdf.url}
+          onClose={() => { setShowBrochure(false); setActivePdf(null); }}
         />
       )}
 

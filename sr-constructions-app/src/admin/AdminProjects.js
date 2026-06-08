@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProjects, deleteProject, upsertProject } from '../services/db';
-import { PROJECTS } from '../data/projects';
+import { getProjects, deleteProject } from '../services/db';
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [syncing, setSyncing] = useState(false);
-  const [syncMsg, setSyncMsg] = useState('');
   const navigate = useNavigate();
 
   const load = () => {
@@ -31,42 +28,14 @@ export default function AdminProjects() {
     }
   };
 
-  const handleExport = async () => {
-    setSyncing(true);
-    setSyncMsg('');
-    try {
-      for (const p of PROJECTS) {
-        const { id, ...data } = p;
-        await upsertProject(id, data);
-      }
-      setSyncMsg(`✓ Exported ${PROJECTS.length} past projects to Firebase successfully.`);
-      load();
-    } catch (e) {
-      const msg = 'Export failed: ' + e.message;
-      setSyncMsg('✗ ' + msg);
-      alert(msg + '\n\nMake sure Firestore rules allow read/write in Firebase Console.');
-    }
-    setSyncing(false);
-  };
-
   return (
     <div>
       <div style={s.header}>
         <h1 style={s.heading}>Past Projects</h1>
-        <div style={s.headerBtns}>
-          <button style={syncing ? s.syncBtnDisabled : s.syncBtn} onClick={handleExport} disabled={syncing}>
-            <i className="fa fa-database" style={{ marginRight: 8 }}></i>
-            {syncing ? 'Exporting…' : 'Export to Firebase'}
-          </button>
-          <button style={s.addBtn} onClick={() => navigate('/admin/projects/new')}>
-            <i className="fa fa-plus" style={{ marginRight: 8 }}></i> Add Project
-          </button>
-        </div>
+        <button style={s.addBtn} onClick={() => navigate('/admin/projects/new')}>
+          <i className="fa fa-plus" style={{ marginRight: 8 }}></i> Add Project
+        </button>
       </div>
-
-      {syncMsg && (
-        <div style={syncMsg.startsWith('✓') ? s.successMsg : s.errorMsg}>{syncMsg}</div>
-      )}
 
       {error && (
         <div style={s.error}>
@@ -81,7 +50,7 @@ export default function AdminProjects() {
       ) : !error && projects.length === 0 ? (
         <div style={s.empty}>
           <i className="fa fa-building" style={{ fontSize: 40, color: '#444', marginBottom: 12 }}></i>
-          <p>No projects yet. Add your first one or use "Export to Firebase" to import the default data.</p>
+          <p>No projects yet. Click "Add Project" to create your first one.</p>
           <button style={s.addBtn} onClick={() => navigate('/admin/projects/new')}>Add Project</button>
         </div>
       ) : (
@@ -113,12 +82,7 @@ export default function AdminProjects() {
 const s = {
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32, flexWrap: 'wrap', gap: 12 },
   heading: { fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 700, color: '#fff' },
-  headerBtns: { display: 'flex', gap: 12, flexWrap: 'wrap' },
   addBtn: { background: '#b8943f', color: '#0e0e0e', border: 'none', fontFamily: "'Barlow Condensed', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '12px 24px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' },
-  syncBtn: { background: 'rgba(184,148,63,.15)', border: '1px solid rgba(184,148,63,.4)', color: '#b8943f', padding: '12px 20px', cursor: 'pointer', fontSize: 13, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center' },
-  syncBtnDisabled: { background: '#222', border: '1px solid #333', color: '#555', padding: '12px 20px', cursor: 'not-allowed', fontSize: 13, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center' },
-  successMsg: { background: 'rgba(125,232,154,.08)', border: '1px solid rgba(125,232,154,.3)', color: '#7de89a', padding: '12px 16px', fontSize: 14, marginBottom: 20 },
-  errorMsg: { background: 'rgba(232,118,118,.08)', border: '1px solid rgba(232,118,118,.3)', color: '#e87676', padding: '12px 16px', fontSize: 14, marginBottom: 20 },
   error: { background: 'rgba(232,118,118,.1)', border: '1px solid rgba(232,118,118,.4)', color: '#e87676', padding: '16px 20px', marginBottom: 24, fontSize: 14, lineHeight: 1.6 },
   muted: { color: '#888' },
   empty: { textAlign: 'center', padding: '60px 0', color: '#555', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 },

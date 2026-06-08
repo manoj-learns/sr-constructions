@@ -13,7 +13,6 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
     area0: initial.area?.[0] || '',
     area1: initial.area?.[1] || '',
     amenities: (initial.amenities || []).join('\n'),
-    specs: Object.entries(initial.specs || {}).map(([k, v]) => `${k}: ${v}`).join('\n'),
   });
   const [imgFile, setImgFile] = useState(null);
   const [imgPreview, setImgPreview] = useState(initial.img || '');
@@ -23,27 +22,53 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
   const [uploadError, setUploadError] = useState('');
 
   const [mapUrl, setMapUrl] = useState(initial.mapUrl || '');
-  const [brochureUrl, setBrochureUrl] = useState(initial.brochureUrl || '');
-  const [brochureFile, setBrochureFile] = useState(null);
-  const [brochureUploading, setBrochureUploading] = useState(false);
-  const [brochureProgress, setBrochureProgress] = useState(0);
 
-  const onBrochureFile = async (e) => {
+  const [pdfs, setPdfs] = useState(
+    initial.pdfs?.length ? initial.pdfs
+    : initial.brochureUrl ? [{ name: 'Brochure', url: initial.brochureUrl }]
+    : []
+  );
+  const [pdfName, setPdfName] = useState('');
+  const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const [pdfProgress, setPdfProgress] = useState(0);
+
+  const onPdfFile = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setBrochureUploading(true);
-    setBrochureProgress(0);
+    setPdfUploading(true);
+    setPdfProgress(0);
     try {
-      const url = await uploadFile(file, 'brochures', setBrochureProgress);
-      setBrochureUrl(url);
-      setBrochureFile(file.name);
+      const url = await uploadFile(file, 'brochures', setPdfProgress);
+      const name = pdfName.trim() || file.name.replace(/\.[^.]+$/, '').replace(/[_-]/g, ' ');
+      setPdfs((p) => [...p, { name, url }]);
+      setPdfName('');
     } catch (err) {
-      setUploadError('Brochure upload failed: ' + err.message);
+      setUploadError('PDF upload failed: ' + err.message);
     }
-    setBrochureUploading(false);
-    setBrochureProgress(0);
+    setPdfUploading(false);
+    setPdfProgress(0);
     e.target.value = '';
   };
+
+  const addPdfUrl = () => {
+    const url = pdfUrl.trim();
+    if (!url) return;
+    setPdfs((p) => [...p, { name: pdfName.trim() || 'Document', url }]);
+    setPdfUrl('');
+    setPdfName('');
+  };
+
+  const removePdf = (idx) => setPdfs((p) => p.filter((_, i) => i !== idx));
+
+  const [specs, setSpecs] = useState(
+    Object.entries(initial.specs || {}).map(([k, v]) => ({ k, v }))
+  );
+
+  const addSpec = () => setSpecs((s) => [...s, { k: '', v: '' }]);
+  const removeSpec = (idx) => setSpecs((s) => s.filter((_, i) => i !== idx));
+  const updateSpec = (idx, field, val) =>
+    setSpecs((s) => s.map((item, i) => (i === idx ? { ...item, [field]: val } : item)));
 
   const [gallery, setGallery] = useState(initial.gallery || []);
   const [galleryInput, setGalleryInput] = useState('');
@@ -107,11 +132,10 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
       setCoverProgress(0);
     }
 
-    const specs = {};
-    form.specs.split('\n').filter(Boolean).forEach((line) => {
-      const [k, ...rest] = line.split(':');
-      if (k) specs[k.trim()] = rest.join(':').trim();
-    });
+    const specsObj = specs.reduce((obj, { k, v }) => {
+      if (k.trim()) obj[k.trim()] = v.trim();
+      return obj;
+    }, {});
 
     const finalGallery = gallery.length ? gallery : (img ? [img] : []);
 
@@ -121,10 +145,10 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
       overview: [form.overview0, form.overview1].filter(Boolean),
       area: [form.area0, form.area1].filter(Boolean),
       amenities: form.amenities.split('\n').filter(Boolean),
-      specs,
+      specs: specsObj,
       gallery: finalGallery,
       mapUrl: mapUrl.trim() || '',
-      brochureUrl: brochureUrl.trim() || '',
+      pdfs,
     };
     onSave(data);
   };
@@ -245,9 +269,42 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
       </Section>
 
       <Section title="Specifications">
-        <Field label="One spec per line — format: Label: Value">
-          <textarea style={{ ...fs.input, minHeight: 120, resize: 'vertical', fontFamily: 'monospace' }} value={form.specs} onChange={set('specs')} placeholder={'Configuration: 2 BHK & 3 BHK\nArea: 950 & 1350 sqft\nStatus: Sold Out'} />
-        </Field>
+        {specs.map((spec, i) => (
+          <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'center' }}>
+            <input
+              style={{ ...fs.input, flex: 1 }}
+              value={spec.k}
+              onChange={(e) => updateSpec(i, 'k', e.target.value)}
+              placeholder="Label (e.g. Total Area)"
+            />
+            <input
+              style={{ ...fs.input, flex: 1 }}
+              value={spec.v}
+              onChange={(e) => updateSpec(i, 'v', e.target.value)}
+              placeholder="Value (e.g. 5 Acres)"
+            />
+            <button type="button" onClick={() => removeSpec(i)} style={{ background: 'rgba(232,118,118,.12)', border: '1px solid rgba(232,118,118,.25)', color: '#e87676', padding: '12px 14px', cursor: 'pointer', fontSize: 12, flexShrink: 0 }}>
+              <i className="fa fa-times"></i>
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={addSpec} style={{ ...fs.addBtn, marginTop: 4 }}>
+          <i className="fa fa-plus" style={{ marginRight: 8 }}></i>Add Specification
+        </button>
+
+        {specs.some((s) => s.k.trim()) && (
+          <div style={{ marginTop: 20 }}>
+            <p style={{ ...fs.hint, marginBottom: 8 }}>Preview (how it looks on the project page):</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', background: '#0e0e0e', border: '1px solid rgba(184,148,63,.2)', borderTop: '3px solid #b8943f' }}>
+              {specs.filter((s) => s.k.trim()).map((s, i) => (
+                <div key={i} style={{ flex: '1 1 140px', padding: '16px 20px', borderRight: '1px solid rgba(255,255,255,.06)' }}>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 9, letterSpacing: 2, textTransform: 'uppercase', color: '#888', marginBottom: 4 }}>{s.k}</div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: '#f5f0e8' }}>{s.v || '—'}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </Section>
 
       <Section title="Google Maps Location">
@@ -269,36 +326,59 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
         <p style={fs.hint}>Google Maps → Share → Embed a map → copy the entire iframe code or just the src URL. Both work.</p>
       </Section>
 
-      <Section title="Project Brochure (PDF)">
-        <div style={fs.imgRow}>
-          <label style={brochureUploading ? fs.uploadBtnDisabled : fs.uploadBtn}>
-            <i className="fa fa-file-pdf" style={{ marginRight: 8 }}></i>
-            {brochureUploading ? `Uploading ${brochureProgress}%…` : brochureFile ? 'Change PDF' : 'Upload PDF'}
-            <input type="file" accept=".pdf" onChange={onBrochureFile} style={{ display: 'none' }} disabled={brochureUploading} />
-          </label>
-          <span style={fs.orText}>or</span>
-          <Field label="Paste PDF URL">
-            <input
-              style={{ ...fs.input, minWidth: 320 }}
-              value={brochureUrl}
-              onChange={(e) => { setBrochureUrl(e.target.value); setBrochureFile(null); }}
-              placeholder="https://drive.google.com/..."
-            />
-          </Field>
-        </div>
-        {brochureUploading && <ProgressBar pct={brochureProgress} />}
-        {brochureUrl && !brochureUploading && (
-          <div style={{ fontSize: 12, color: '#7de89a', marginTop: 6 }}>
-            <i className="fa fa-check-circle" style={{ marginRight: 6 }}></i>
-            Brochure set — visitors will need to submit an enquiry to download it.
+      <Section title="Documents & Brochures (PDF)">
+        {pdfs.length > 0 && (
+          <div style={{ marginBottom: 20 }}>
+            {pdfs.map((pdf, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: '#111', border: '1px solid rgba(255,255,255,.07)', marginBottom: 8 }}>
+                <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 18, flexShrink: 0 }}></i>
+                <span style={{ flex: 1, color: '#f5f0e8', fontSize: 14, fontFamily: 'Barlow, sans-serif' }}>{pdf.name}</span>
+                <a href={pdf.url} target="_blank" rel="noopener noreferrer" style={{ color: '#7bb8f0', fontSize: 12, textDecoration: 'none', padding: '5px 10px', border: '1px solid rgba(123,184,240,.3)', marginRight: 4 }}>
+                  <i className="fa fa-eye" style={{ marginRight: 4 }}></i>View
+                </a>
+                <a href={pdf.url} download style={{ color: '#7de89a', fontSize: 12, textDecoration: 'none', padding: '5px 10px', border: '1px solid rgba(125,232,154,.3)', marginRight: 4 }}>
+                  <i className="fa fa-download" style={{ marginRight: 4 }}></i>Download
+                </a>
+                <button type="button" onClick={() => removePdf(i)} style={{ background: 'rgba(232,118,118,.12)', border: '1px solid rgba(232,118,118,.25)', color: '#e87676', padding: '5px 10px', cursor: 'pointer', fontSize: 12 }}>
+                  <i className="fa fa-times"></i>
+                </button>
+              </div>
+            ))}
           </div>
         )}
-        <p style={fs.hint}>Upload a PDF brochure. Visitors must submit their contact details before downloading.</p>
+
+        <Field label="PDF Label (optional)">
+          <input
+            style={fs.input}
+            value={pdfName}
+            onChange={(e) => setPdfName(e.target.value)}
+            placeholder="e.g. Floor Plan, Price List, Brochure"
+          />
+        </Field>
+        <div style={fs.imgRow}>
+          <label style={pdfUploading ? fs.uploadBtnDisabled : fs.uploadBtn}>
+            <i className="fa fa-file-pdf" style={{ marginRight: 8 }}></i>
+            {pdfUploading ? `Uploading ${pdfProgress}%…` : 'Upload PDF'}
+            <input type="file" accept=".pdf" onChange={onPdfFile} style={{ display: 'none' }} disabled={pdfUploading} />
+          </label>
+          <span style={fs.orText}>or</span>
+          <div style={fs.galleryInputRow}>
+            <input
+              style={{ ...fs.input, flex: 1 }}
+              value={pdfUrl}
+              onChange={(e) => setPdfUrl(e.target.value)}
+              placeholder="Paste PDF URL"
+            />
+            <button type="button" onClick={addPdfUrl} style={fs.addBtn}>Add</button>
+          </div>
+        </div>
+        {pdfUploading && <ProgressBar pct={pdfProgress} />}
+        <p style={fs.hint}>Add multiple PDFs (brochure, floor plan, price list). Visitors submit an enquiry to download them.</p>
       </Section>
 
       <div style={fs.footer}>
         <button type="button" onClick={onCancel} style={fs.cancel}>Cancel</button>
-        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading || brochureUploading}>
+        <button type="submit" style={fs.submit} disabled={saving || uploading || galleryUploading || pdfUploading}>
           {saving ? 'Saving…' : 'Save Project'}
         </button>
       </div>

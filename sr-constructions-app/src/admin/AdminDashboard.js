@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-import { getContacts, getProjects, getOngoing, upsertProject, upsertOngoing } from '../services/db';
-import { PROJECTS, UPCOMING } from '../data/projects';
+import { getContacts, getProjects, getOngoing } from '../services/db';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ contacts: 0, unread: 0, projects: 0, ongoing: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [seeding, setSeeding] = useState(false);
-  const [seedMsg, setSeedMsg] = useState('');
 
   const load = () => {
     setLoading(true);
@@ -29,27 +26,6 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => { load(); }, []);
-
-  const handleSeed = async () => {
-    if (!window.confirm('This will import all existing projects into Firestore. Only do this once. Continue?')) return;
-    setSeeding(true);
-    setSeedMsg('');
-    try {
-      for (const p of PROJECTS) {
-        const { id, ...data } = p;
-        await upsertProject(id, data);
-      }
-      for (const u of UPCOMING) {
-        const { id, ...data } = u;
-        await upsertOngoing(id, data);
-      }
-      setSeedMsg(`✓ Imported ${PROJECTS.length} past projects and ${UPCOMING.length} ongoing projects successfully.`);
-      load();
-    } catch (e) {
-      setSeedMsg('✗ Seed failed: ' + e.message + '. Check Firestore rules.');
-    }
-    setSeeding(false);
-  };
 
   return (
     <div>
@@ -79,22 +55,6 @@ service cloud.firestore {
           <StatCard icon="fa-bell" label="Unread Enquiries" value={stats.unread} accent="#e87676" />
           <StatCard icon="fa-building" label="Past Projects" value={stats.projects} accent="#7de89a" />
           <StatCard icon="fa-hard-hat" label="Ongoing Projects" value={stats.ongoing} accent="#7bb8f0" />
-        </div>
-      )}
-
-      {!error && (
-        <div style={s.section}>
-          <h2 style={s.sectionTitle}>Import Existing Projects</h2>
-          <p style={s.hint}>If your Projects and Ongoing lists are empty, click below to import all existing project data from the website into Firestore. <strong>Only do this once.</strong></p>
-          <button style={seeding ? s.seedBtnDisabled : s.seedBtn} onClick={handleSeed} disabled={seeding}>
-            <i className="fa fa-database" style={{ marginRight: 8 }}></i>
-            {seeding ? 'Importing…' : 'Import All Projects into Firestore'}
-          </button>
-          {seedMsg && (
-            <div style={seedMsg.startsWith('✓') ? s.successMsg : s.errorMsg}>
-              {seedMsg}
-            </div>
-          )}
         </div>
       )}
 
@@ -143,10 +103,6 @@ const s = {
   section: { background: '#1a1a1a', border: '1px solid rgba(255,255,255,.07)', padding: '28px 32px', marginBottom: 20 },
   sectionTitle: { fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 10 },
   hint: { color: '#888', fontSize: 14, lineHeight: 1.6, marginBottom: 20 },
-  seedBtn: { background: 'rgba(184,148,63,.15)', border: '1px solid rgba(184,148,63,.4)', color: '#b8943f', padding: '12px 24px', cursor: 'pointer', fontSize: 14, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center' },
-  seedBtnDisabled: { background: '#222', border: '1px solid #333', color: '#555', padding: '12px 24px', cursor: 'not-allowed', fontSize: 14, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: 1, textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center' },
-  successMsg: { marginTop: 16, background: 'rgba(125,232,154,.08)', border: '1px solid rgba(125,232,154,.3)', color: '#7de89a', padding: '12px 16px', fontSize: 14 },
-  errorMsg: { marginTop: 16, background: 'rgba(232,118,118,.08)', border: '1px solid rgba(232,118,118,.3)', color: '#e87676', padding: '12px 16px', fontSize: 14 },
   actions: { display: 'flex', gap: 14, flexWrap: 'wrap' },
   actionBtn: { display: 'inline-flex', alignItems: 'center', background: '#111', border: '1px solid rgba(184,148,63,.2)', color: '#c8c0b0', padding: '12px 20px', textDecoration: 'none', fontSize: 14 },
 };
