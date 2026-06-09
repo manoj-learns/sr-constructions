@@ -89,7 +89,7 @@ export const uploadFile = (file, folder, onProgress) => {
     formData.append('folder', folder);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dos9ucizg/auto/upload');
+    xhr.open('POST', 'https://api.cloudinary.com/v1_1/dos9ucizg/raw/upload');
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress?.(Math.round((e.loaded / e.total) * 100));

@@ -20,22 +20,12 @@ export default function BrochureModal({ projectName, brochureUrl, onClose }) {
       });
     } catch { /* non-blocking */ }
 
-    // fetch → blob → local anchor so download attribute works cross-origin
-    try {
-      const res = await fetch(brochureUrl);
-      const blob = await res.blob();
-      const localUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = localUrl;
-      a.download = `${projectName.replace(/[^a-z0-9]/gi, '_')}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(localUrl), 1000);
-    } catch {
-      // fallback: open directly in tab
-      window.open(brochureUrl, '_blank', 'noopener,noreferrer');
-    }
+    // Cloudinary fl_attachment forces Content-Disposition:attachment server-side
+    // so window.open triggers a real download without any cross-origin issues
+    const dlUrl = brochureUrl.includes('cloudinary.com')
+      ? brochureUrl.replace('/upload/', '/upload/fl_attachment/')
+      : brochureUrl;
+    window.open(dlUrl, '_blank', 'noopener,noreferrer');
 
     setDone(true);
     setSubmitting(false);
