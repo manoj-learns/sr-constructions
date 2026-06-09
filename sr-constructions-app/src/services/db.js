@@ -6,12 +6,13 @@ import {
 import { db } from '../firebase';
 
 // ── Cloudinary URL helper ─────────────────────────────────
-// Normalises resource type to 'raw' and inserts delivery flag.
-// Handles old /image/upload/ URLs (auto-upload mis-classified as image)
-// and new /raw/upload/ URLs equally.
+// For view: return URL as-is (browser displays PDF natively).
+// For download: insert fl_attachment into the existing resource-type path.
+// fl_inline is NOT a valid Cloudinary flag and is never used.
 export const cloudinaryUrl = (url, flag) => {
   if (!url?.includes('cloudinary.com')) return url;
-  return url.replace(/\/(image|video|auto|raw)\/upload\//, `/raw/upload/${flag}/`);
+  if (flag === 'fl_inline') return url; // just open directly — browser handles inline display
+  return url.replace(/\/upload\//, `/upload/${flag}/`);
 };
 
 // ── Projects ──────────────────────────────────────────────
@@ -96,6 +97,7 @@ export const uploadFile = (file, folder, onProgress) => {
     formData.append('file', file);
     formData.append('upload_preset', 'sr_constructions');
     formData.append('folder', folder);
+    formData.append('access_mode', 'public');
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'https://api.cloudinary.com/v1_1/dos9ucizg/raw/upload');
