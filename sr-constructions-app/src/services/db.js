@@ -97,7 +97,6 @@ export const uploadFile = (file, folder, onProgress) => {
     formData.append('file', file);
     formData.append('upload_preset', 'sr_constructions');
     formData.append('folder', folder);
-    formData.append('access_mode', 'public');
 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'https://api.cloudinary.com/v1_1/dos9ucizg/raw/upload');
