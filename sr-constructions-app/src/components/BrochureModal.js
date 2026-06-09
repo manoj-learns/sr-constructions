@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addContact } from '../services/db';
+import { addContact, cloudinaryUrl } from '../services/db';
 
 export default function BrochureModal({ projectName, brochureUrl, onClose }) {
   const [form, setForm] = useState({ Name: '', 'Phone number': '', Email: '' });
@@ -22,10 +22,7 @@ export default function BrochureModal({ projectName, brochureUrl, onClose }) {
 
     // Cloudinary fl_attachment forces Content-Disposition:attachment server-side
     // so window.open triggers a real download without any cross-origin issues
-    const dlUrl = brochureUrl.includes('cloudinary.com')
-      ? brochureUrl.replace('/upload/', '/upload/fl_attachment/')
-      : brochureUrl;
-    window.open(dlUrl, '_blank', 'noopener,noreferrer');
+    window.open(cloudinaryUrl(brochureUrl, 'fl_attachment'), '_blank', 'noopener,noreferrer');
 
     setDone(true);
     setSubmitting(false);

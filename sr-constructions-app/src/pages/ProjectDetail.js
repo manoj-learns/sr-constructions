@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProject } from '../services/db';
+import { getProject, cloudinaryUrl } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
 import BrochureModal from '../components/BrochureModal';
@@ -120,7 +120,7 @@ export default function ProjectDetail() {
                     <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 20, flexShrink: 0 }}></i>
                     <span style={{ flex: 1, fontSize: 15, color: 'var(--text)' }}>{pdf.name}</span>
                     <button className="btn-outline" style={{ fontSize: 12, padding: '8px 16px' }}
-                      onClick={() => window.open(pdf.url.includes('cloudinary.com') ? pdf.url.replace('/upload/', '/upload/fl_inline/') : pdf.url, '_blank', 'noopener,noreferrer')}>
+                      onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_inline'), '_blank', 'noopener,noreferrer')}>
                       <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
                     </button>
                     <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>

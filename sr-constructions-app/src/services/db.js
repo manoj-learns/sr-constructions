@@ -5,6 +5,15 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
+// ── Cloudinary URL helper ─────────────────────────────────
+// Normalises resource type to 'raw' and inserts delivery flag.
+// Handles old /image/upload/ URLs (auto-upload mis-classified as image)
+// and new /raw/upload/ URLs equally.
+export const cloudinaryUrl = (url, flag) => {
+  if (!url?.includes('cloudinary.com')) return url;
+  return url.replace(/\/(image|video|auto|raw)\/upload\//, `/raw/upload/${flag}/`);
+};
+
 // ── Projects ──────────────────────────────────────────────
 export const getProjects = async () => {
   const q = query(collection(db, 'projects'), orderBy('createdAt', 'asc'));

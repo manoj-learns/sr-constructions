@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadImage, uploadFile } from '../services/db';
+import { uploadImage, uploadFile, cloudinaryUrl } from '../services/db';
 
 export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) {
   const [form, setForm] = useState({
@@ -333,10 +333,10 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', background: '#111', border: '1px solid rgba(255,255,255,.07)', marginBottom: 8 }}>
                 <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 18, flexShrink: 0 }}></i>
                 <span style={{ flex: 1, color: '#f5f0e8', fontSize: 14, fontFamily: 'Barlow, sans-serif' }}>{pdf.name}</span>
-                <button type="button" onClick={() => window.open(pdf.url.includes('cloudinary.com') ? pdf.url.replace('/upload/', '/upload/fl_inline/') : pdf.url, '_blank', 'noopener,noreferrer')} style={{ color: '#7bb8f0', fontSize: 12, background: 'none', padding: '5px 10px', border: '1px solid rgba(123,184,240,.3)', marginRight: 4, cursor: 'pointer' }}>
+                <button type="button" onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_inline'), '_blank', 'noopener,noreferrer')} style={{ color: '#7bb8f0', fontSize: 12, background: 'none', padding: '5px 10px', border: '1px solid rgba(123,184,240,.3)', marginRight: 4, cursor: 'pointer' }}>
                   <i className="fa fa-eye" style={{ marginRight: 4 }}></i>View
                 </button>
-                <button type="button" onClick={() => window.open(pdf.url.includes('cloudinary.com') ? pdf.url.replace('/upload/', '/upload/fl_attachment/') : pdf.url, '_blank', 'noopener,noreferrer')} style={{ color: '#7de89a', fontSize: 12, background: 'none', padding: '5px 10px', border: '1px solid rgba(125,232,154,.3)', marginRight: 4, cursor: 'pointer' }}>
+                <button type="button" onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_attachment'), '_blank', 'noopener,noreferrer')} style={{ color: '#7de89a', fontSize: 12, background: 'none', padding: '5px 10px', border: '1px solid rgba(125,232,154,.3)', marginRight: 4, cursor: 'pointer' }}>
                   <i className="fa fa-download" style={{ marginRight: 4 }}></i>Download
                 </button>
                 <button type="button" onClick={() => removePdf(i)} style={{ background: 'rgba(232,118,118,.12)', border: '1px solid rgba(232,118,118,.25)', color: '#e87676', padding: '5px 10px', cursor: 'pointer', fontSize: 12 }}>
