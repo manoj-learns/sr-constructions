@@ -166,9 +166,10 @@ export default function OngoingDetail() {
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                     <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 20, flexShrink: 0 }}></i>
                     <span style={{ flex: 1, fontSize: 15, color: 'var(--text)' }}>{pdf.name}</span>
-                    <a href={pdf.url} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ fontSize: 12, padding: '8px 16px', textDecoration: 'none' }}>
+                    <button className="btn-outline" style={{ fontSize: 12, padding: '8px 16px' }}
+                      onClick={() => window.open(pdf.url.includes('cloudinary.com') ? pdf.url.replace('/upload/', '/upload/fl_inline/') : pdf.url, '_blank', 'noopener,noreferrer')}>
                       <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
-                    </a>
+                    </button>
                     <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
                       <i className="fa fa-download" style={{ marginRight: 6 }}></i>Download
                     </button>
