@@ -8,21 +8,21 @@ export default function BrochureModal({ projectName, brochureUrl, onClose }) {
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitting(true);
-    try {
-      await addContact({
-        ...form,
-        'Project Type': 'Brochure Download',
-        Message: `Requested brochure for: ${projectName}`,
-        source: 'brochure',
-      });
-    } catch { /* non-blocking */ }
 
-    // Cloudinary fl_attachment forces Content-Disposition:attachment server-side
-    // so window.open triggers a real download without any cross-origin issues
+    // Must call window.open synchronously inside the click handler — browsers
+    // block popups opened after an await (user-gesture context is lost).
     window.open(cloudinaryUrl(brochureUrl, 'fl_attachment'), '_blank', 'noopener,noreferrer');
+
+    // Save contact in background — non-blocking, doesn't gate the download
+    addContact({
+      ...form,
+      'Project Type': 'Brochure Download',
+      Message: `Requested brochure for: ${projectName}`,
+      source: 'brochure',
+    }).catch(() => {});
 
     setDone(true);
     setSubmitting(false);
