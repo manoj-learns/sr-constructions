@@ -2,6 +2,7 @@ import {
   collection, doc, getDocs, getDoc,
   addDoc, setDoc, deleteDoc, updateDoc,
   orderBy, query, serverTimestamp,
+  onSnapshot, where, Timestamp,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -146,4 +147,36 @@ export const uploadImage = (file, folder, onProgress) => {
     xhr.onerror = () => reject(new Error('Network error during upload'));
     xhr.send(formData);
   });
+};
+
+// ── Visit Analytics ───────────────────────────────────────
+const getOrCreateSession = () => {
+  let id = sessionStorage.getItem('_vsid');
+  if (!id) { id = Math.random().toString(36).slice(2); sessionStorage.setItem('_vsid', id); }
+  return id;
+};
+
+export const logVisit = (page) =>
+  addDoc(collection(db, 'visits'), {
+    page,
+    sessionId: getOrCreateSession(),
+    hour: new Date().getHours(),
+    day: new Date().getDay(),
+    createdAt: serverTimestamp(),
+  }).catch(() => {});
+
+export const subscribeLiveViews = (callback) => {
+  const since = Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 1000));
+  const q = query(collection(db, 'visits'), where('createdAt', '>=', since), orderBy('createdAt', 'desc'));
+  return onSnapshot(q, (snap) => {
+    const sessions = new Set(snap.docs.map((d) => d.data().sessionId));
+    callback(sessions.size);
+  }, () => {});
+};
+
+export const getVisitStats = async (days = 30) => {
+  const since = Timestamp.fromDate(new Date(Date.now() - days * 24 * 60 * 60 * 1000));
+  const q = query(collection(db, 'visits'), where('createdAt', '>=', since), orderBy('createdAt', 'asc'));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => d.data());
 };

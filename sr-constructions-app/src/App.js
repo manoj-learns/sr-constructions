@@ -8,6 +8,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import OngoingDetail from './pages/OngoingDetail';
 import Chatbot from './components/Chatbot';
 import VisitorPopup from './components/VisitorPopup';
+import VisitTracker from './components/VisitTracker';
 import AdminLogin from './admin/AdminLogin';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
@@ -28,6 +29,7 @@ function PublicLayout() {
     <>
       <Navbar />
       <ScrollToTop />
+      <VisitTracker />
       <Chatbot />
       <VisitorPopup />
       <Routes>
