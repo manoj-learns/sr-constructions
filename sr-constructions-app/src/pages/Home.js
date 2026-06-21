@@ -171,7 +171,7 @@ export default function Home() {
                         {specs.map(([k, v]) => (
                           <div key={k}>
                             <div style={{ fontSize: 10, color: '#b8943f', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: "'Barlow Condensed', sans-serif" }}>{k}</div>
-                            <div style={{ fontSize: 13, color: '#f5f0e8', fontWeight: 600, marginTop: 2, fontFamily: 'Barlow, sans-serif' }}>{v}</div>
+                            <div style={{ fontSize: 13, color: 'var(--text)', fontWeight: 600, marginTop: 2, fontFamily: 'Barlow, sans-serif' }}>{v}</div>
                           </div>
                         ))}
                       </div>
