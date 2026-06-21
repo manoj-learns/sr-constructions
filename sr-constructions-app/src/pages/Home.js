@@ -4,6 +4,8 @@ import Footer from '../components/Footer';
 import useScrollAnimation from '../components/useScrollAnimation';
 import { addContact, getProjects, getOngoing } from '../services/db';
 
+const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%231a1a1a' width='600' height='400'/%3E%3Ctext x='50%25' y='44%25' text-anchor='middle' fill='%23444' font-size='40' font-family='serif'%3E%F0%9F%8F%97%3C/text%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' fill='%23555' font-size='13' font-family='sans-serif'%3EImage not available%3C/text%3E%3C/svg%3E";
+
 const HERO_SLIDES = [
   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1920&q=80',
   'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1920&q=80',
@@ -135,31 +137,78 @@ export default function Home() {
             </button>
           </div>
           <div className="upcoming-grid">
-            {ongoing.slice(0, 3).map((u, i) => (
-              <div
-                key={u.id}
-                className="upcoming-card fade-up"
-                style={{ transitionDelay: `${(i % 3) * 0.1}s` }}
-                onClick={() => navigate(`/ongoing/${u.id}`)}
-              >
-                <div className="upcoming-card-img-wrap">
-                  <img className="upcoming-img" src={u.img} alt={u.name} />
-                  <div className="uc-hint">View Details</div>
-                </div>
-                <div className="upcoming-body">
-                  <div className="upcoming-badge">{u.badge}</div>
-                  <div className="upcoming-name">{u.name}</div>
-                  <div className="upcoming-location">
-                    <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
-                    {u.location}
+            {ongoing.slice(0, 3).map((u, i) => {
+              const specs = u.specs ? Object.entries(u.specs).slice(0, 4) : [];
+              return (
+                <div
+                  key={u.id}
+                  className="upcoming-card fade-up"
+                  style={{ transitionDelay: `${(i % 3) * 0.1}s`, cursor: 'pointer' }}
+                  onClick={() => navigate(`/ongoing/${u.id}`)}
+                >
+                  {/* Image */}
+                  <div className="upcoming-card-img-wrap">
+                    <img className="upcoming-img" src={u.img || PLACEHOLDER} alt={u.name}
+                      onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }} />
+                    <div className="uc-hint">View Details</div>
+                    <div className="upcoming-badge" style={{ position: 'absolute', top: 14, left: 14, margin: 0 }}>{u.badge}</div>
                   </div>
-                  <div className="upcoming-completion"><strong>{u.completion}</strong></div>
-                  <span className="btn-outline" style={{ display: 'inline-flex' }}>
-                    Learn More <i className="fa fa-arrow-right"></i>
-                  </span>
+
+                  {/* Body */}
+                  <div className="upcoming-body">
+                    {/* Name */}
+                    <div className="upcoming-name">{u.name}</div>
+
+                    {/* Location */}
+                    <div className="upcoming-location">
+                      <i className="fa fa-map-marker-alt" style={{ color: 'var(--gold)', marginRight: 6 }}></i>
+                      {u.location}
+                    </div>
+
+                    {/* Specs strip */}
+                    {specs.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 20px', margin: '14px 0', padding: '12px 0', borderTop: '1px solid rgba(184,148,63,.15)', borderBottom: '1px solid rgba(184,148,63,.15)' }}>
+                        {specs.map(([k, v]) => (
+                          <div key={k}>
+                            <div style={{ fontSize: 10, color: '#b8943f', letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: "'Barlow Condensed', sans-serif" }}>{k}</div>
+                            <div style={{ fontSize: 13, color: '#f5f0e8', fontWeight: 600, marginTop: 2, fontFamily: 'Barlow, sans-serif' }}>{v}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Overview snippet */}
+                    {u.overview?.[0] && (
+                      <p style={{ fontSize: 13, color: '#888', lineHeight: 1.65, margin: '0 0 12px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                        {u.overview[0]}
+                      </p>
+                    )}
+
+                    {/* Highlights */}
+                    {u.highlights?.length > 0 && (
+                      <ul style={{ listStyle: 'none', margin: '0 0 14px', padding: 0 }}>
+                        {u.highlights.slice(0, 3).map((h, hi) => (
+                          <li key={hi} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: '#999', padding: '3px 0' }}>
+                            <i className="fa fa-circle" style={{ color: '#b8943f', fontSize: 5, marginTop: 5, flexShrink: 0 }}></i>
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* Footer */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.06)', marginTop: 'auto' }}>
+                      <div style={{ fontSize: 13, color: '#b8943f', fontWeight: 600, fontFamily: 'Barlow, sans-serif' }}>
+                        <i className="fa fa-calendar-alt" style={{ marginRight: 6, opacity: 0.7 }}></i>{u.completion}
+                      </div>
+                      <span className="btn-outline" style={{ display: 'inline-flex', fontSize: 12, padding: '7px 14px' }}>
+                        View Details <i className="fa fa-arrow-right"></i>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
