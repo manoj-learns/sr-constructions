@@ -315,7 +315,7 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
             onChange={(e) => {
               const val = e.target.value;
               const match = val.match(/src="([^"]+)"/);
-              setMapUrl(match ? match[1] : val);
+              setMapUrl(match ? match[1].replace(/&amp;/g, '&') : val);
             }}
             placeholder={'Paste the full <iframe> embed code or just the src URL'}
           />
