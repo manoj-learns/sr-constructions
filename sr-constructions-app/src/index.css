@@ -94,7 +94,7 @@ nav.solid {
   clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
 }
 .nav-logo-icon span { font-family: 'Playfair Display', serif; font-weight: 800; font-size: 18px; color: #FFFFFF; }
-.nav-logo-text { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: .5px; }
+.nav-logo-text { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: .5px; white-space: nowrap; }
 .nav-logo-text span { color: var(--gold); }
 .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
 .nav-links a, .nav-links button {

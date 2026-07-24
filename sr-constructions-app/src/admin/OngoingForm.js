@@ -78,13 +78,20 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
+  const [dragOver, setDragOver] = useState(false);
+
   const onImg = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setImgFile(file);
-    setImgUrl('');
-    setUploadError('');
-    setCoverProgress(0);
+    setImgFile(file); setImgUrl(''); setUploadError(''); setCoverProgress(0);
+    setImgPreview(URL.createObjectURL(file));
+  };
+
+  const onImgDrop = (e) => {
+    e.preventDefault(); setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    setImgFile(file); setImgUrl(''); setUploadError(''); setCoverProgress(0);
     setImgPreview(URL.createObjectURL(file));
   };
 
@@ -188,28 +195,41 @@ export default function OngoingForm({ initial = {}, onSave, onCancel, saving }) 
       </Section>
 
       <Section title="Cover Image">
-        {imgPreview && <img src={imgPreview} alt="preview" style={fs.preview} />}
-
-        <div style={fs.imgRow}>
-          <label style={uploading ? fs.uploadBtnDisabled : fs.uploadBtn}>
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={onImgDrop}
+          style={{
+            border: `2px dashed ${dragOver ? '#b8943f' : 'rgba(255,255,255,.15)'}`,
+            borderRadius: 4, padding: '28px 20px', textAlign: 'center',
+            background: dragOver ? 'rgba(184,148,63,.06)' : 'transparent',
+            transition: 'all .2s', marginBottom: 16, cursor: 'pointer',
+          }}
+        >
+          {imgPreview
+            ? <img src={imgPreview} alt="preview" style={{ ...fs.preview, margin: '0 auto 12px' }} />
+            : <div style={{ color: '#555', fontSize: 13 }}><i className="fa fa-cloud-upload-alt" style={{ fontSize: 28, color: '#b8943f', display: 'block', marginBottom: 8 }}></i>Drag &amp; drop an image here</div>
+          }
+          <div style={{ fontSize: 12, color: '#666', marginTop: imgPreview ? 0 : 8 }}>or</div>
+          <label style={{ ...fs.uploadBtn, display: 'inline-flex', marginTop: 10, cursor: 'pointer' }}>
             <i className="fa fa-upload" style={{ marginRight: 8 }}></i>
-            {uploading ? `Uploading ${coverProgress}%…` : imgFile ? 'Change File' : 'Upload from Device'}
+            {uploading ? `Uploading ${coverProgress}%…` : imgFile ? 'Change File' : 'Browse File'}
             <input type="file" accept="image/*" onChange={onImg} style={{ display: 'none' }} disabled={uploading} />
           </label>
-          <span style={fs.orText}>or</span>
-          <Field label="Paste Image URL">
-            <input
-              style={{ ...fs.input, minWidth: 320 }}
-              value={imgUrl}
-              onChange={(e) => { setImgUrl(e.target.value); setImgPreview(e.target.value); setImgFile(null); }}
-              placeholder="https://images.unsplash.com/..."
-            />
-          </Field>
         </div>
+
+        <Field label="Or paste image URL">
+          <input
+            style={{ ...fs.input }}
+            value={imgUrl}
+            onChange={(e) => { setImgUrl(e.target.value); setImgPreview(e.target.value); setImgFile(null); }}
+            placeholder="https://images.unsplash.com/..."
+          />
+        </Field>
 
         {uploading && <ProgressBar pct={coverProgress} />}
         {uploadError && <div style={fs.uploadErr}><i className="fa fa-exclamation-triangle" style={{ marginRight: 6 }}></i>{uploadError}</div>}
-        <p style={fs.hint}>Upload a file OR paste a URL. Recommended size: 1200×800px.</p>
+        <p style={fs.hint}>Drag &amp; drop, browse, or paste a URL. Recommended size: 1200×800px.</p>
       </Section>
 
       <Section title="Gallery Photos">

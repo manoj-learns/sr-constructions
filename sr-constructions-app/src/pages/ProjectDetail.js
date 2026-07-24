@@ -121,13 +121,15 @@ export default function ProjectDetail() {
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                     <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 20, flexShrink: 0 }}></i>
                     <span style={{ flex: 1, fontSize: 15, color: 'var(--text)' }}>{pdf.name}</span>
-                    <button className="btn-outline" style={{ fontSize: 12, padding: '8px 16px' }}
-                      onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_inline'), '_blank', 'noopener,noreferrer')}>
-                      <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
-                    </button>
-                    <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
-                      <i className="fa fa-download" style={{ marginRight: 6 }}></i>Download
-                    </button>
+                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                      <button className="btn-outline" style={{ fontSize: 12, padding: '8px 16px' }}
+                        onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_inline'), '_blank', 'noopener,noreferrer')}>
+                        <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
+                      </button>
+                      <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
+                        <i className="fa fa-download" style={{ marginRight: 6 }}></i>Download
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

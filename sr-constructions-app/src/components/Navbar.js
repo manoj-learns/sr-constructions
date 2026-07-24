@@ -40,7 +40,7 @@ export default function Navbar() {
       <nav className={navClass}>
         <div className="nav-logo" onClick={() => navigate('/')}>
           <div className="nav-logo-icon"><span>SR</span></div>
-          <div className="nav-logo-text">SR <span>Constructions</span></div>
+          <div className="nav-logo-text"><span>SR Constructions</span></div>
         </div>
 
         {isHome ? (
