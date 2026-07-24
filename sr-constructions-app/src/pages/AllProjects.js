@@ -4,7 +4,7 @@ import { getProjects } from '../services/db';
 import MiniFooter from '../components/MiniFooter';
 import useScrollAnimation from '../components/useScrollAnimation';
 
-const FILTERS = ['all', 'Residential', 'Commercial', 'Plot Layout'];
+const FILTERS = ['all', 'Residential', 'Commercial', 'Plot Layout', 'Project Development'];
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect fill='%231a1a1a' width='600' height='400'/%3E%3Ctext x='50%25' y='44%25' text-anchor='middle' fill='%23444' font-size='40' font-family='serif'%3E%F0%9F%8F%97%3C/text%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' fill='%23555' font-size='13' font-family='sans-serif'%3EImage not available%3C/text%3E%3C/svg%3E";
 
 export default function AllProjects() {

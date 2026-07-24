@@ -428,8 +428,10 @@ section { position: relative; }
 .body-text { color: var(--text-light); font-size: 16px; line-height: 1.8; font-weight: 400; }
 .gallery-section { margin-bottom: 80px; }
 .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 40px; }
-.gallery-item { overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
-.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; }
+.gallery-item { overflow: hidden; aspect-ratio: 4/3; cursor: pointer; position: relative; }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; display: block; user-select: none; -webkit-user-select: none; }
+/* Suppress Chrome's native visual search / Lens overlay on gallery images */
+.gallery-item::after { content: ''; position: absolute; inset: 0; }
 .gallery-item:hover img { transform: scale(1.06); }
 .gallery-item:first-child { grid-column: span 2; aspect-ratio: 16/9; }
 .amenities-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
@@ -442,7 +444,8 @@ section { position: relative; }
 }
 .detail-cta h3 { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: var(--text); }
 .detail-cta p { color: var(--text-muted); font-size: 15px; margin-top: 8px; }
-.cta-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+.cta-btns { display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch; }
+.cta-btns .btn-gold, .cta-btns .btn-outline { height: 52px; box-sizing: border-box; display: inline-flex; align-items: center; margin-top: 0; }
 .upcoming-pulse { display: inline-flex; align-items: center; gap: 10px; background: rgba(184,148,63,.1); border: 1px solid rgba(184,148,63,.3); padding: 8px 18px; margin-bottom: 20px; font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
 .pulse-dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse-anim 1.5s ease-in-out infinite; }
 .countdown-strip {

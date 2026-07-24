@@ -14,6 +14,7 @@ export default function OngoingDetail() {
   const [loading, setLoading] = useState(true);
   const [showBrochure, setShowBrochure] = useState(false);
   const [activePdf, setActivePdf] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
   useScrollAnimation();
 
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function OngoingDetail() {
             <h2 className="detail-section-title">Visual Walkthrough</h2>
             <div className="gallery-grid">
               {u.gallery.map((g, i) => (
-                <div key={i} className="gallery-item">
+                <div key={i} className="gallery-item" onClick={() => setLightbox(g || PLACEHOLDER)}>
                   <img src={g || PLACEHOLDER} alt={u.name} loading="lazy" onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER; }} />
                 </div>
               ))}
@@ -224,6 +225,13 @@ export default function OngoingDetail() {
           brochureUrl={activePdf.url}
           onClose={() => { setShowBrochure(false); setActivePdf(null); }}
         />
+      )}
+
+      {lightbox && (
+        <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.92)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, cursor: 'zoom-out' }}>
+          <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 20, right: 24, background: 'none', border: 'none', color: '#fff', fontSize: 28, cursor: 'pointer', lineHeight: 1 }}>×</button>
+          <img src={lightbox} alt="Full view" style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', boxShadow: '0 0 60px rgba(0,0,0,.8)' }} onClick={(e) => e.stopPropagation()} />
+        </div>
       )}
 
       <MiniFooter />

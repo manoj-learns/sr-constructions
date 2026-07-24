@@ -172,6 +172,7 @@ export default function ProjectForm({ initial = {}, onSave, onCancel, saving }) 
               <option>Residential</option>
               <option>Commercial</option>
               <option>Plot Layout</option>
+              <option>Project Development</option>
             </select>
           </Field>
         </Row>
