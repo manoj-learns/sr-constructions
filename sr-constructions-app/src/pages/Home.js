@@ -73,7 +73,7 @@ export default function Home() {
             <div className="section-label">Company Overview</div>
             <div className="gold-bar"></div>
             <h2 className="section-title">19 years of building dreams</h2>
-            <p>At SR Constructions, we believe a home is the most important bridge between a person's dreams and their reality. Founded in 2007, our journey over the last two decades has been defined by a simple philosophy: Start with affection, finish with perfection.</p>
+            <p>At <span className="nowrap">SR Constructions</span>, we believe a home is the most important bridge between a person's dreams and their reality. Founded in 2007, our journey over the last two decades has been defined by a simple philosophy: Start with affection, finish with perfection.</p>
             <p>We have successfully delivered over 15+ projects, ranging from residential apartments to high-value plots. We aren't just selling land; we are offering a footprint in the most promising locations of tomorrow.</p>
           </div>
           <div className="about-stats fade-right">

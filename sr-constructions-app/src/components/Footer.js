@@ -56,7 +56,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; 2025 <span>SR Constructions &amp; Trisandhya</span> All rights reserved.</p>
+        <p>&copy; 2025 <span className="nowrap">SR Constructions &amp; Trisandhya</span> All rights reserved.</p>
         <p>Built with <span>&#9829;</span> in Visakhapatnam, India</p>
       </div>
     </footer>

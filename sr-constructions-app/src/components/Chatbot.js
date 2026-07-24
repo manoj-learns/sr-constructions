@@ -51,7 +51,7 @@ export default function Chatbot() {
             <div style={s.headerLeft}>
               <div style={s.avatar}><i className="fa fa-hard-hat"></i></div>
               <div>
-                <div style={s.headerTitle}>SR Constructions</div>
+                <div style={{ ...s.headerTitle, whiteSpace: 'nowrap' }}>SR Constructions</div>
                 <div style={s.headerSub}>
                   <span style={s.dot}></span> AI Assistant
                 </div>

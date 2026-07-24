@@ -29,7 +29,7 @@ export default function AllProjects() {
           <div className="section-label">Our Portfolio</div>
           <div className="gold-bar"></div>
           <h1>Every Project,<br /><em style={{ fontStyle: 'italic', color: 'var(--gold-light)' }}>A Promise Kept.</em></h1>
-          <p>From residential apartments to plot layouts — explore the full breadth of SR Constructions' completed works across Visakhapatnam.</p>
+          <p>From residential apartments to plot layouts — explore the full breadth of <span className="nowrap">SR Constructions'</span> completed works across Visakhapatnam.</p>
         </div>
       </div>
 

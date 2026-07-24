@@ -13,7 +13,7 @@ export default function MiniFooter() {
   return (
     <footer className="mini-footer">
       <div className="mini-footer-inner">
-        <p>&copy; 2025 <span>SR Constructions &amp; Trisandhya</span>. All rights reserved.</p>
+        <p>&copy; 2025 <span className="nowrap">SR Constructions &amp; Trisandhya</span>. All rights reserved.</p>
         <button className="btn-gold-sm" onClick={goToContact}>
           Enquire Now <i className="fa fa-arrow-right"></i>
         </button>

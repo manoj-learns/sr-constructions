@@ -39,7 +39,7 @@ export default function VisitorPopup() {
       <div style={s.modal}>
         <button style={s.closeBtn} onClick={close} aria-label="Close"><i className="fa fa-times"></i></button>
 
-        <div style={s.badge}><i className="fa fa-hard-hat" style={{ marginRight: 6 }}></i> SR Constructions</div>
+        <div style={{ ...s.badge, whiteSpace: 'nowrap' }}><i className="fa fa-hard-hat" style={{ marginRight: 6 }}></i> SR Constructions</div>
         <h2 style={s.title}>Find Your Perfect Property</h2>
         <p style={s.sub}>Leave your details and our team will reach out with the latest projects, plots, and exclusive offers.</p>
 
