@@ -122,11 +122,11 @@ export default function ProjectDetail() {
                     <i className="fa fa-file-pdf" style={{ color: '#b8943f', fontSize: 20, flexShrink: 0 }}></i>
                     <span style={{ flex: 1, fontSize: 15, color: 'var(--text)' }}>{pdf.name}</span>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                      <button className="btn-outline" style={{ fontSize: 12, padding: '8px 16px' }}
+                      <button className="btn-outline" style={{ fontSize: 12, padding: '9px 20px', width: 110, textAlign: 'center', boxSizing: 'border-box', height: 38 }}
                         onClick={() => window.open(cloudinaryUrl(pdf.url, 'fl_inline'), '_blank', 'noopener,noreferrer')}>
                         <i className="fa fa-eye" style={{ marginRight: 6 }}></i>View
                       </button>
-                      <button className="btn-gold" style={{ fontSize: 12, padding: '8px 16px' }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
+                      <button className="btn-gold" style={{ fontSize: 12, padding: '9px 20px', width: 110, textAlign: 'center', boxSizing: 'border-box', height: 38 }} onClick={() => { setActivePdf(pdf); setShowBrochure(true); }}>
                         <i className="fa fa-download" style={{ marginRight: 6 }}></i>Download
                       </button>
                     </div>
